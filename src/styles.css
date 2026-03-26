@@ -1,0 +1,62 @@
+:root {
+  font-family: Arial, sans-serif;
+  line-height: 1.4;
+  color: #111;
+  background: #f7f7f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+button,
+input {
+  padding: 10px 14px;
+  font: inherit;
+}
+
+button.active {
+  border: 2px solid #111;
+}
+
+.search {
+  min-width: 320px;
+}
+
+.table {
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 80px 1.5fr 1fr 120px 120px;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.row-header {
+  font-weight: 700;
+  background: #f0f0f0;
+  position: sticky;
+  top: 0;
+}
