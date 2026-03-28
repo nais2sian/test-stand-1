@@ -7,12 +7,20 @@ import {
   memo,
   Profiler,
   useCallback,
+  useEffect,
   useMemo,
+  useRef,
   useState,
+  type ChangeEvent,
   type ProfilerOnRenderCallback,
 } from "react";
 import { generateItems } from "../data";
-import { expensiveFilterAndSort } from "../utils";
+import {
+  expensiveFilterAndSort,
+  getExpensiveCallCount,
+  logMeasure,
+  resetExpensiveCallCount,
+} from "../utils";
 
 const ITEMS_COUNT = 10000;
 const items = generateItems(ITEMS_COUNT);
@@ -46,6 +54,9 @@ const ProductRow = memo(function ProductRow({
 export default function ScenarioOneOptimized() {
   const [query, setQuery] = useState("");
   const [counter, setCounter] = useState(0);
+  const [, forceUpdate] = useState(0);
+
+  const shouldMeasureNextPaintRef = useRef(false);
 
   const renderedAt = useMemo(
     () => performance.now().toFixed(2),
@@ -57,29 +68,64 @@ export default function ScenarioOneOptimized() {
     phase,
     actualDuration,
   ) => {
-    console.log(`[Profiler][${id}] ${phase} duration:`, actualDuration);
+    console.log(
+      `[Profiler][${id}] ${phase} duration: ${actualDuration.toFixed(2)} ms`,
+    );
   };
 
   const handleInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (event: ChangeEvent<HTMLInputElement>) => {
       performance.mark("optimized-input-start");
+      shouldMeasureNextPaintRef.current = true;
       setQuery(event.target.value);
     },
     [],
   );
 
+  const handleUnrelatedUpdate = useCallback(() => {
+    performance.mark("optimized-unrelated-start");
+    shouldMeasureNextPaintRef.current = true;
+    setCounter((value) => value + 1);
+  }, []);
+
+  const handleResetCounter = useCallback(() => {
+    resetExpensiveCallCount();
+    forceUpdate((value) => value + 1);
+  }, []);
+
   const filteredItems = useMemo(() => {
     return expensiveFilterAndSort(items, query);
   }, [query]);
 
-  requestAnimationFrame(() => {
-    performance.mark("optimized-next-paint");
-    performance.measure(
-      "optimized-input-to-next-paint",
-      "optimized-input-start",
-      "optimized-next-paint",
-    );
-  });
+  useEffect(() => {
+    if (!shouldMeasureNextPaintRef.current) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      if (performance.getEntriesByName("optimized-input-start").length > 0) {
+        performance.mark("optimized-input-end");
+        logMeasure(
+          "optimized-input-to-next-paint",
+          "optimized-input-start",
+          "optimized-input-end",
+        );
+      }
+
+      if (
+        performance.getEntriesByName("optimized-unrelated-start").length > 0
+      ) {
+        performance.mark("optimized-unrelated-end");
+        logMeasure(
+          "optimized-unrelated-update-to-next-paint",
+          "optimized-unrelated-start",
+          "optimized-unrelated-end",
+        );
+      }
+
+      shouldMeasureNextPaintRef.current = false;
+    });
+  }, [query, counter]);
 
   return (
     <Profiler id="ScenarioOneOptimized" onRender={onRenderCallback}>
@@ -97,13 +143,19 @@ export default function ScenarioOneOptimized() {
             onChange={handleInputChange}
             placeholder="Type to filter 10,000 items"
           />
-          <button onClick={() => setCounter((value) => value + 1)}>
+
+          <button onClick={handleUnrelatedUpdate}>
             Unrelated state update: {counter}
+          </button>
+
+          <button onClick={handleResetCounter}>
+            Reset expensive call count
           </button>
         </div>
 
         <p>Last render timestamp: {renderedAt}</p>
         <p>Visible items: {filteredItems.length}</p>
+        <p>expensiveFilterAndSort calls: {getExpensiveCallCount()}</p>
 
         <div className="table">
           <div className="row row-header">

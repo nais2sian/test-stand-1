@@ -4,12 +4,20 @@
 
 import {
   Profiler,
+  useEffect,
   useMemo,
+  useRef,
   useState,
+  type ChangeEvent,
   type ProfilerOnRenderCallback,
 } from "react";
 import { generateItems } from "../data";
-import { expensiveFilterAndSort } from "../utils";
+import {
+  expensiveFilterAndSort,
+  getExpensiveCallCount,
+  logMeasure,
+  resetExpensiveCallCount,
+} from "../utils";
 
 const ITEMS_COUNT = 10000;
 const items = generateItems(ITEMS_COUNT);
@@ -37,6 +45,9 @@ function ProductRow({ id, name, category, price, rating }: ProductRowProps) {
 export default function ScenarioOneBaseline() {
   const [query, setQuery] = useState("");
   const [counter, setCounter] = useState(0);
+  const [, forceUpdate] = useState(0);
+
+  const shouldMeasureNextPaintRef = useRef(false);
 
   const renderedAt = useMemo(
     () => performance.now().toFixed(2),
@@ -48,24 +59,57 @@ export default function ScenarioOneBaseline() {
     phase,
     actualDuration,
   ) => {
-    console.log(`[Profiler][${id}] ${phase} duration:`, actualDuration);
+    console.log(
+      `[Profiler][${id}] ${phase} duration: ${actualDuration.toFixed(2)} ms`,
+    );
   };
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     performance.mark("baseline-input-start");
+    shouldMeasureNextPaintRef.current = true;
     setQuery(event.target.value);
+  }
+
+  function handleUnrelatedUpdate() {
+    performance.mark("baseline-unrelated-start");
+    shouldMeasureNextPaintRef.current = true;
+    setCounter((value) => value + 1);
+  }
+
+  function handleResetCounter() {
+    resetExpensiveCallCount();
+    forceUpdate((value) => value + 1);
   }
 
   const filteredItems = expensiveFilterAndSort(items, query);
 
-  requestAnimationFrame(() => {
-    performance.mark("baseline-next-paint");
-    performance.measure(
-      "baseline-input-to-next-paint",
-      "baseline-input-start",
-      "baseline-next-paint",
-    );
-  });
+  useEffect(() => {
+    if (!shouldMeasureNextPaintRef.current) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      if (performance.getEntriesByName("baseline-input-start").length > 0) {
+        performance.mark("baseline-input-end");
+        logMeasure(
+          "baseline-input-to-next-paint",
+          "baseline-input-start",
+          "baseline-input-end",
+        );
+      }
+
+      if (performance.getEntriesByName("baseline-unrelated-start").length > 0) {
+        performance.mark("baseline-unrelated-end");
+        logMeasure(
+          "baseline-unrelated-update-to-next-paint",
+          "baseline-unrelated-start",
+          "baseline-unrelated-end",
+        );
+      }
+
+      shouldMeasureNextPaintRef.current = false;
+    });
+  }, [query, counter]);
 
   return (
     <Profiler id="ScenarioOneBaseline" onRender={onRenderCallback}>
@@ -83,13 +127,19 @@ export default function ScenarioOneBaseline() {
             onChange={handleInputChange}
             placeholder="Type to filter 10,000 items"
           />
-          <button onClick={() => setCounter((value) => value + 1)}>
+
+          <button onClick={handleUnrelatedUpdate}>
             Unrelated state update: {counter}
+          </button>
+
+          <button onClick={handleResetCounter}>
+            Reset expensive call count
           </button>
         </div>
 
         <p>Last render timestamp: {renderedAt}</p>
         <p>Visible items: {filteredItems.length}</p>
+        <p>expensiveFilterAndSort calls: {getExpensiveCallCount()}</p>
 
         <div className="table">
           <div className="row row-header">
