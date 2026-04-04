@@ -60,3 +60,72 @@ button.active {
   position: sticky;
   top: 0;
 }
+
+.virtual-table,
+.virtual-table-header {
+  border: 1px solid #ccc;
+  background: #fff;
+  width: 100%;
+}
+
+.baseline-table {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.virtual-scroll-container {
+  height: 500px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-top: none;
+  background: #fff;
+  position: relative;
+}
+
+.virtual-inner {
+  position: relative;
+  width: 100%;
+}
+
+.virtual-row {
+  display: grid;
+  grid-template-columns: 100px 1.5fr 1fr 120px 120px;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.virtual-absolute-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: #fff;
+}
+
+.virtual-header {
+  font-weight: 700;
+  background: #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.metric-card {
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 12px;
+  min-height: 100px;
+}
+
+.metric-card-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}

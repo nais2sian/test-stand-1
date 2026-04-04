@@ -1,0 +1,172 @@
+import {
+  Profiler,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  memo,
+  type UIEvent,
+  type ProfilerOnRenderCallback,
+} from "react";
+
+type RowItem = {
+  id: number;
+  title: string;
+  category: string;
+  price: number;
+  stock: number;
+};
+
+const ROWS_COUNT = 10000;
+const ROW_HEIGHT = 44;
+const CONTAINER_HEIGHT = 500;
+const OVERSCAN = 8;
+
+function generateRows(count: number): RowItem[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: index + 1,
+    title: `Item ${index + 1}`,
+    category: `Category ${(index % 20) + 1}`,
+    price: ((index * 13) % 1000) + 10,
+    stock: (index * 7) % 300,
+  }));
+}
+
+const rows = generateRows(ROWS_COUNT);
+
+const Row = memo(function Row({
+  item,
+  style,
+}: {
+  item: RowItem;
+  style: React.CSSProperties;
+}) {
+  return (
+    <div className="virtual-row virtual-absolute-row" style={style}>
+      <span>{item.id}</span>
+      <span>{item.title}</span>
+      <span>{item.category}</span>
+      <span>{item.price}</span>
+      <span>{item.stock}</span>
+    </div>
+  );
+});
+
+export default function ScenarioTwoOptimized() {
+  const [scrollTop, setScrollTop] = useState(0);
+  const [paintCost, setPaintCost] = useState<string>("-");
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const renderedAt = useMemo(() => performance.now().toFixed(2), []);
+
+  const onRenderCallback: ProfilerOnRenderCallback = (
+    id,
+    phase,
+    actualDuration,
+  ) => {
+    console.log(
+      `[Profiler][${id}] ${phase} duration: ${actualDuration.toFixed(2)} ms`,
+    );
+  };
+
+  const totalHeight = rows.length * ROW_HEIGHT;
+
+  const startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN);
+  const endIndex = Math.min(
+    rows.length,
+    Math.ceil((scrollTop + CONTAINER_HEIGHT) / ROW_HEIGHT) + OVERSCAN,
+  );
+
+  const visibleRows = rows.slice(startIndex, endIndex);
+
+  const handleScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
+    performance.mark("scenario2-scroll-start");
+    setScrollTop(event.currentTarget.scrollTop);
+  }, []);
+
+  useEffect(() => {
+    if (performance.getEntriesByName("scenario2-scroll-start").length === 0) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      performance.mark("scenario2-scroll-end");
+
+      try {
+        performance.measure(
+          "scenario2-scroll-to-next-paint",
+          "scenario2-scroll-start",
+          "scenario2-scroll-end",
+        );
+
+        const entries = performance.getEntriesByName(
+          "scenario2-scroll-to-next-paint",
+        );
+        const lastEntry = entries[entries.length - 1];
+
+        if (lastEntry) {
+          const value = lastEntry.duration.toFixed(2);
+          setPaintCost(value);
+          console.log(`[measure] scenario2-scroll-to-next-paint: ${value} ms`);
+        }
+
+        performance.clearMarks("scenario2-scroll-start");
+        performance.clearMarks("scenario2-scroll-end");
+        performance.clearMeasures("scenario2-scroll-to-next-paint");
+      } catch (error) {
+        console.error("[measure] scenario2-scroll-to-next-paint failed", error);
+      }
+    });
+  }, [scrollTop]);
+
+  return (
+    <Profiler id="ScenarioTwoOptimized" onRender={onRenderCallback}>
+      <section>
+        <h2>Scenario 2 - Optimized</h2>
+        <p>
+          Manual virtualization. Only visible rows and a small overscan buffer
+          are mounted.
+        </p>
+
+        <p>Last render timestamp: {renderedAt}</p>
+        <p>Total rows: {rows.length}</p>
+        <p>Visible rows in DOM: {visibleRows.length}</p>
+        <p>Last scroll-to-next-paint: {paintCost} ms</p>
+
+        <div className="virtual-table-header">
+          <div className="virtual-row virtual-header">
+            <span>ID</span>
+            <span>Title</span>
+            <span>Category</span>
+            <span>Price</span>
+            <span>Stock</span>
+          </div>
+        </div>
+
+        <div
+          ref={scrollContainerRef}
+          className="virtual-scroll-container"
+          onScroll={handleScroll}
+        >
+          <div className="virtual-inner" style={{ height: `${totalHeight}px` }}>
+            {visibleRows.map((item, index) => {
+              const actualIndex = startIndex + index;
+
+              return (
+                <Row
+                  key={item.id}
+                  item={item}
+                  style={{
+                    top: `${actualIndex * ROW_HEIGHT}px`,
+                    height: `${ROW_HEIGHT}px`,
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </Profiler>
+  );
+}
