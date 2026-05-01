@@ -1,12 +1,14 @@
 import { useMemo } from "react";
-import ScenarioOneBaseline from "./scenarios/ScenarioOneBaseline";
-import ScenarioOneOptimized from "./scenarios/ScenarioOneOptimized";
-import ScenarioTwoBaseline from "./scenarios/ScenarioTwoBaseline";
-import ScenarioTwoOptimized from "./scenarios/ScenarioTwoOptimized";
-import ScenarioThreeBaseline from "./scenarios/ScenarioThreeBaseline";
-import ScenarioThreeOptimized from "./scenarios/ScenarioThreeOptimized";
+import ScenarioOneBaseline from "./scenarios/scenario1/ScenarioOneBaseline";
+import ScenarioOneOptimized from "./scenarios/scenario1/ScenarioOneOptimized";
+import ScenarioTwoBaseline from "./scenarios/scenario2/ScenarioTwoBaseline";
+import ScenarioTwoOptimized from "./scenarios/scenario2/ScenarioTwoOptimized";
+import ScenarioThreeBaseline from "./scenarios/scenario3/ScenarioThreeBaseline";
+import ScenarioThreeOptimized from "./scenarios/scenario3/ScenarioThreeOptimized";
+import ScenarioFourBaseline from "./scenarios/scenario4/ScenarioFourBaseline";
+import ScenarioFourOptimized from "./scenarios/scenario4/ScenarioFourOptimized";
 
-type Scenario = "scenario1" | "scenario2" | "scenario3";
+type Scenario = "scenario1" | "scenario2" | "scenario3" | "scenario4";
 type Mode = "baseline" | "optimized";
 
 function getSearchParamsState(): { scenario: Scenario; mode: Mode } {
@@ -20,7 +22,9 @@ function getSearchParamsState(): { scenario: Scenario; mode: Mode } {
       ? "scenario2"
       : scenarioParam === "scenario3"
         ? "scenario3"
-        : "scenario1";
+        : scenarioParam === "scenario4"
+          ? "scenario4"
+          : "scenario1";
 
   const mode: Mode = modeParam === "optimized" ? "optimized" : "baseline";
 
@@ -75,6 +79,12 @@ export default function App() {
           Scenario 3 - Frequent updates
         </button>
       </div>
+      <button
+        className={scenario === "scenario4" ? "active" : ""}
+        onClick={() => handleScenarioChange("scenario4")}
+      >
+        Scenario 4 - Scheduling
+      </button>
 
       <div className="controls">
         <button
@@ -109,6 +119,12 @@ export default function App() {
       )}
       {scenario === "scenario3" && mode === "optimized" && (
         <ScenarioThreeOptimized />
+      )}
+      {scenario === "scenario4" && mode === "baseline" && (
+        <ScenarioFourBaseline />
+      )}
+      {scenario === "scenario4" && mode === "optimized" && (
+        <ScenarioFourOptimized />
       )}
     </main>
   );

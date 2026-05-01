@@ -1,4 +1,4 @@
-import { Profiler, useMemo, type ProfilerOnRenderCallback } from "react";
+import { Profiler, type ProfilerOnRenderCallback } from "react";
 
 type RowItem = {
   id: number;
@@ -35,8 +35,6 @@ function Row({ item }: { item: RowItem }) {
 }
 
 export default function ScenarioTwoBaseline() {
-  const renderedAt = useMemo(() => performance.now().toFixed(2), []);
-
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
     phase,
@@ -56,7 +54,6 @@ export default function ScenarioTwoBaseline() {
           DOM.
         </p>
 
-        <p>Last render timestamp: {renderedAt}</p>
         <p>Total rows: {rows.length}</p>
 
         <div className="virtual-table baseline-table">

@@ -2,7 +2,6 @@ import {
   memo,
   Profiler,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ProfilerOnRenderCallback,
@@ -17,8 +16,7 @@ type MetricCard = {
 };
 
 const CARDS_COUNT = 200;
-const INCOMING_INTERVAL_MS = 50;
-const UI_BATCH_INTERVAL_MS = 250;
+const UPDATE_INTERVAL_MS = 50;
 
 function generateInitialCards(count: number): MetricCard[] {
   return Array.from({ length: count }, (_, index) => ({
@@ -56,7 +54,7 @@ const Card = memo(function Card({ item }: { item: MetricCard }) {
   );
 });
 
-export default function ScenarioThreeOptimized() {
+export default function ScenarioThreeBaseline() {
   const [cards, setCards] = useState<MetricCard[]>(() =>
     generateInitialCards(CARDS_COUNT),
   );
@@ -67,9 +65,6 @@ export default function ScenarioThreeOptimized() {
   const [runKey, setRunKey] = useState(0);
 
   const shouldMeasureRef = useRef(false);
-  const pendingCardsRef = useRef<MetricCard[] | null>(null);
-
-  const renderedAt = useMemo(() => performance.now().toFixed(2), [cards]);
 
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
@@ -86,31 +81,17 @@ export default function ScenarioThreeOptimized() {
       return;
     }
 
-    pendingCardsRef.current = cards;
-
-    const incomingIntervalId = window.setInterval(() => {
-      pendingCardsRef.current = produceNextCards(
-        pendingCardsRef.current ?? generateInitialCards(CARDS_COUNT),
-      );
-
-      setIncomingUpdates((value) => value + 1);
-    }, INCOMING_INTERVAL_MS);
-
-    const batchIntervalId = window.setInterval(() => {
-      if (!pendingCardsRef.current) {
-        return;
-      }
-
-      performance.mark("scenario3-optimized-update-start");
+    const intervalId = window.setInterval(() => {
+      performance.mark("scenario3-baseline-update-start");
       shouldMeasureRef.current = true;
 
-      setCards(pendingCardsRef.current);
+      setCards((previous) => produceNextCards(previous));
+      setIncomingUpdates((value) => value + 1);
       setRenderedUpdates((value) => value + 1);
-    }, UI_BATCH_INTERVAL_MS);
+    }, UPDATE_INTERVAL_MS);
 
     return () => {
-      window.clearInterval(incomingIntervalId);
-      window.clearInterval(batchIntervalId);
+      window.clearInterval(intervalId);
     };
   }, [isRunning, runKey]);
 
@@ -121,15 +102,15 @@ export default function ScenarioThreeOptimized() {
 
     requestAnimationFrame(() => {
       try {
-        performance.mark("scenario3-optimized-update-end");
+        performance.mark("scenario3-baseline-update-end");
         performance.measure(
-          "scenario3-optimized-update-to-next-paint",
-          "scenario3-optimized-update-start",
-          "scenario3-optimized-update-end",
+          "scenario3-baseline-update-to-next-paint",
+          "scenario3-baseline-update-start",
+          "scenario3-baseline-update-end",
         );
 
         const entries = performance.getEntriesByName(
-          "scenario3-optimized-update-to-next-paint",
+          "scenario3-baseline-update-to-next-paint",
         );
         const lastEntry = entries[entries.length - 1];
 
@@ -137,16 +118,16 @@ export default function ScenarioThreeOptimized() {
           const duration = lastEntry.duration.toFixed(2);
           setLastMeasure(duration);
           console.log(
-            `[measure] scenario3-optimized-update-to-next-paint: ${duration} ms`,
+            `[measure] scenario3-baseline-update-to-next-paint: ${duration} ms`,
           );
         }
 
-        performance.clearMarks("scenario3-optimized-update-start");
-        performance.clearMarks("scenario3-optimized-update-end");
-        performance.clearMeasures("scenario3-optimized-update-to-next-paint");
+        performance.clearMarks("scenario3-baseline-update-start");
+        performance.clearMarks("scenario3-baseline-update-end");
+        performance.clearMeasures("scenario3-baseline-update-to-next-paint");
       } catch (error) {
         console.error(
-          "[measure] scenario3-optimized-update-to-next-paint failed",
+          "[measure] scenario3-baseline-update-to-next-paint failed",
           error,
         );
       }
@@ -165,9 +146,7 @@ export default function ScenarioThreeOptimized() {
 
   function handleReset() {
     setIsRunning(false);
-    const initial = generateInitialCards(CARDS_COUNT);
-    setCards(initial);
-    pendingCardsRef.current = initial;
+    setCards(generateInitialCards(CARDS_COUNT));
     setIncomingUpdates(0);
     setRenderedUpdates(0);
     setLastMeasure("-");
@@ -175,12 +154,12 @@ export default function ScenarioThreeOptimized() {
   }
 
   return (
-    <Profiler id="ScenarioThreeOptimized" onRender={onRenderCallback}>
+    <Profiler id="ScenarioThreeBaseline" onRender={onRenderCallback}>
       <section>
-        <h2>Scenario 3 - Optimized</h2>
+        <h2>Scenario 3 - Baseline</h2>
         <p>
-          High-frequency incoming updates are batched. Data arrives every 50 ms,
-          but the UI is updated every 250 ms.
+          High-frequency updates. The UI is re-rendered on every incoming update
+          (every 50 ms).
         </p>
 
         <div className="controls">
@@ -193,7 +172,6 @@ export default function ScenarioThreeOptimized() {
         <p>Incoming updates: {incomingUpdates}</p>
         <p>Rendered updates: {renderedUpdates}</p>
         <p>Last update-to-next-paint: {lastMeasure} ms</p>
-        <p>Last render timestamp: {renderedAt}</p>
         <p>Total cards: {cards.length}</p>
 
         <div className="metrics-grid">

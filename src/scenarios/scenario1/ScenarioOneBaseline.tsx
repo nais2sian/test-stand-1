@@ -1,26 +1,22 @@
-// filteredItems is wrapped in useMemo
-// recalculation happens only when query changes
-// the ProductRow component is wrapped in memo
-// the input handler is wrapped in useCallback
+// filtering and sorting are executed on every render
+// even an unrelated state update triggered by a button recomputes filteredItems
+// the ProductRow component is not memoized
 
 import {
-  memo,
   Profiler,
-  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ChangeEvent,
   type ProfilerOnRenderCallback,
 } from "react";
-import { generateItems } from "../data";
+import { generateItems } from "../../data";
 import {
   expensiveFilterAndSort,
   getExpensiveCallCount,
   logMeasure,
   resetExpensiveCallCount,
-} from "../utils";
+} from "../../utils";
 
 const ITEMS_COUNT = 10000;
 const items = generateItems(ITEMS_COUNT);
@@ -33,13 +29,7 @@ type ProductRowProps = {
   rating: number;
 };
 
-const ProductRow = memo(function ProductRow({
-  id,
-  name,
-  category,
-  price,
-  rating,
-}: ProductRowProps) {
+function ProductRow({ id, name, category, price, rating }: ProductRowProps) {
   return (
     <div className="row">
       <span>{id}</span>
@@ -49,19 +39,14 @@ const ProductRow = memo(function ProductRow({
       <span>{rating}</span>
     </div>
   );
-});
+}
 
-export default function ScenarioOneOptimized() {
+export default function ScenarioOneBaseline() {
   const [query, setQuery] = useState("");
   const [counter, setCounter] = useState(0);
   const [, forceUpdate] = useState(0);
 
   const shouldMeasureNextPaintRef = useRef(false);
-
-  const renderedAt = useMemo(
-    () => performance.now().toFixed(2),
-    [query, counter],
-  );
 
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
@@ -73,29 +58,24 @@ export default function ScenarioOneOptimized() {
     );
   };
 
-  const handleInputChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      performance.mark("optimized-input-start");
-      shouldMeasureNextPaintRef.current = true;
-      setQuery(event.target.value);
-    },
-    [],
-  );
+  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+    performance.mark("baseline-input-start");
+    shouldMeasureNextPaintRef.current = true;
+    setQuery(event.target.value);
+  }
 
-  const handleUnrelatedUpdate = useCallback(() => {
-    performance.mark("optimized-unrelated-start");
+  function handleUnrelatedUpdate() {
+    performance.mark("baseline-unrelated-start");
     shouldMeasureNextPaintRef.current = true;
     setCounter((value) => value + 1);
-  }, []);
+  }
 
-  const handleResetCounter = useCallback(() => {
+  function handleResetCounter() {
     resetExpensiveCallCount();
     forceUpdate((value) => value + 1);
-  }, []);
+  }
 
-  const filteredItems = useMemo(() => {
-    return expensiveFilterAndSort(items, query);
-  }, [query]);
+  const filteredItems = expensiveFilterAndSort(items, query);
 
   useEffect(() => {
     if (!shouldMeasureNextPaintRef.current) {
@@ -103,23 +83,21 @@ export default function ScenarioOneOptimized() {
     }
 
     requestAnimationFrame(() => {
-      if (performance.getEntriesByName("optimized-input-start").length > 0) {
-        performance.mark("optimized-input-end");
+      if (performance.getEntriesByName("baseline-input-start").length > 0) {
+        performance.mark("baseline-input-end");
         logMeasure(
-          "optimized-input-to-next-paint",
-          "optimized-input-start",
-          "optimized-input-end",
+          "baseline-input-to-next-paint",
+          "baseline-input-start",
+          "baseline-input-end",
         );
       }
 
-      if (
-        performance.getEntriesByName("optimized-unrelated-start").length > 0
-      ) {
-        performance.mark("optimized-unrelated-end");
+      if (performance.getEntriesByName("baseline-unrelated-start").length > 0) {
+        performance.mark("baseline-unrelated-end");
         logMeasure(
-          "optimized-unrelated-update-to-next-paint",
-          "optimized-unrelated-start",
-          "optimized-unrelated-end",
+          "baseline-unrelated-update-to-next-paint",
+          "baseline-unrelated-start",
+          "baseline-unrelated-end",
         );
       }
 
@@ -128,23 +106,26 @@ export default function ScenarioOneOptimized() {
   }, [query, counter]);
 
   return (
-    <Profiler id="ScenarioOneOptimized" onRender={onRenderCallback}>
-      <section>
-        <h2>Scenario 1 - Optimized</h2>
+    <Profiler id="ScenarioOneBaseline" onRender={onRenderCallback}>
+      <section data-testid="scenario1-baseline">
+        <h2>Scenario 1 - Baseline</h2>
         <p>
-          Filtering and sorting are memoized. Recalculation happens only when
-          query changes.
+          No memoization for filtered data. Every render recomputes filtering
+          and sorting.
         </p>
 
         <div className="controls">
           <input
+            data-testid="scenario1-input"
             className="search"
             value={query}
             onChange={handleInputChange}
             placeholder="Type to filter 10,000 items"
           />
-
-          <button onClick={handleUnrelatedUpdate}>
+          <button
+            onClick={handleUnrelatedUpdate}
+            data-testid="scenario1-unrelated-update"
+          >
             Unrelated state update: {counter}
           </button>
 
@@ -153,10 +134,10 @@ export default function ScenarioOneOptimized() {
           </button>
         </div>
 
-        <p>Last render timestamp: {renderedAt}</p>
         <p>Visible items: {filteredItems.length}</p>
-        <p>expensiveFilterAndSort calls: {getExpensiveCallCount()}</p>
-
+        <p data-testid="scenario1-expensive-call-count">
+          expensiveFilterAndSort calls: {getExpensiveCallCount()}
+        </p>
         <div className="table">
           <div className="row row-header">
             <span>ID</span>

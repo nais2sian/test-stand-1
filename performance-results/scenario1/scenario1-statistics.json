@@ -1,0 +1,724 @@
+{
+  "scenario": "scenario1",
+  "interpretationUnit": "One run is treated as one independent observation. Raw measurements are descriptive only.",
+  "modes": [
+    {
+      "scenario": "scenario1",
+      "mode": "baseline",
+      "runs": 10,
+      "inputToNextPaint": {
+        "rawMeasurements": {
+          "count": 50,
+          "mean": 9.95,
+          "median": 5.6,
+          "standardDeviation": 7.4,
+          "standardError": 1.05,
+          "min": 3.1,
+          "max": 25.7,
+          "p75": 15.5,
+          "p90": 21.2,
+          "p95": 22.38,
+          "ci95Low": 7.9,
+          "ci95High": 12,
+          "ci95HalfWidth": 2.05
+        },
+        "perRunMeans": {
+          "count": 10,
+          "mean": 9.95,
+          "median": 9.84,
+          "standardDeviation": 0.66,
+          "standardError": 0.21,
+          "min": 8.92,
+          "max": 11.1,
+          "p75": 10.38,
+          "p90": 10.63,
+          "p95": 10.87,
+          "ci95Low": 9.47,
+          "ci95High": 10.42,
+          "ci95HalfWidth": 0.47
+        },
+        "perRunMedians": {
+          "count": 10,
+          "mean": 5.6,
+          "median": 5.6,
+          "standardDeviation": 0.21,
+          "standardError": 0.07,
+          "min": 5.3,
+          "max": 6,
+          "p75": 5.7,
+          "p90": 5.82,
+          "p95": 5.91,
+          "ci95Low": 5.45,
+          "ci95High": 5.75,
+          "ci95HalfWidth": 0.15
+        },
+        "perRunMeanValues": [
+          10.58,
+          8.92,
+          9.72,
+          10.38,
+          9.22,
+          9.94,
+          9.74,
+          10.36,
+          11.1,
+          9.5
+        ],
+        "perRunMedianValues": [
+          5.7,
+          5.4,
+          5.6,
+          6,
+          5.7,
+          5.5,
+          5.4,
+          5.3,
+          5.8,
+          5.6
+        ]
+      },
+      "unrelatedUpdateToNextPaint": {
+        "rawMeasurements": {
+          "count": 50,
+          "mean": 6.66,
+          "median": 5.65,
+          "standardDeviation": 3.84,
+          "standardError": 0.54,
+          "min": 2.5,
+          "max": 16.5,
+          "p75": 8.72,
+          "p90": 12.81,
+          "p95": 13.05,
+          "ci95Low": 5.59,
+          "ci95High": 7.72,
+          "ci95HalfWidth": 1.06
+        },
+        "perRunMeans": {
+          "count": 10,
+          "mean": 6.66,
+          "median": 5.8,
+          "standardDeviation": 2.7,
+          "standardError": 0.85,
+          "min": 3.56,
+          "max": 12.22,
+          "p75": 7.26,
+          "p90": 10.49,
+          "p95": 11.36,
+          "ci95Low": 4.72,
+          "ci95High": 8.59,
+          "ci95HalfWidth": 1.93
+        },
+        "perRunMedians": {
+          "count": 10,
+          "mean": 6.36,
+          "median": 5.5,
+          "standardDeviation": 3.27,
+          "standardError": 1.03,
+          "min": 3,
+          "max": 12.8,
+          "p75": 7.13,
+          "p90": 11.27,
+          "p95": 12.03,
+          "ci95Low": 4.02,
+          "ci95High": 8.7,
+          "ci95HalfWidth": 2.34
+        },
+        "perRunMeanValues": [
+          5.3,
+          3.56,
+          5.06,
+          6.56,
+          10.3,
+          12.22,
+          7.5,
+          6.24,
+          5.36,
+          4.46
+        ],
+        "perRunMedianValues": [
+          5.2,
+          3.7,
+          3,
+          3.5,
+          11.1,
+          12.8,
+          7.3,
+          6.6,
+          5.8,
+          4.6
+        ]
+      },
+      "expensiveCallsDuringInput": {
+        "perRunValues": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        "perRunStatistics": {
+          "count": 10,
+          "mean": 5,
+          "median": 5,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "min": 5,
+          "max": 5,
+          "p75": 5,
+          "p90": 5,
+          "p95": 5,
+          "ci95Low": 5,
+          "ci95High": 5,
+          "ci95HalfWidth": 0
+        }
+      },
+      "expensiveCallsDuringUnrelated": {
+        "perRunValues": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        "perRunStatistics": {
+          "count": 10,
+          "mean": 5,
+          "median": 5,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "min": 5,
+          "max": 5,
+          "p75": 5,
+          "p90": 5,
+          "p95": 5,
+          "ci95Low": 5,
+          "ci95High": 5,
+          "ci95HalfWidth": 0
+        }
+      },
+      "finalExpensiveCallCount": {
+        "perRunValues": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "perRunStatistics": {
+          "count": 10,
+          "mean": 11,
+          "median": 11,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "min": 11,
+          "max": 11,
+          "p75": 11,
+          "p90": 11,
+          "p95": 11,
+          "ci95Low": 11,
+          "ci95High": 11,
+          "ci95HalfWidth": 0
+        }
+      }
+    },
+    {
+      "scenario": "scenario1",
+      "mode": "optimized",
+      "runs": 10,
+      "inputToNextPaint": {
+        "rawMeasurements": {
+          "count": 50,
+          "mean": 8.89,
+          "median": 5.3,
+          "standardDeviation": 6.68,
+          "standardError": 0.94,
+          "min": 2.8,
+          "max": 21.4,
+          "p75": 13.5,
+          "p90": 19.84,
+          "p95": 20.5,
+          "ci95Low": 7.04,
+          "ci95High": 10.74,
+          "ci95HalfWidth": 1.85
+        },
+        "perRunMeans": {
+          "count": 10,
+          "mean": 8.89,
+          "median": 8.88,
+          "standardDeviation": 0.42,
+          "standardError": 0.13,
+          "min": 8.36,
+          "max": 9.72,
+          "p75": 9.11,
+          "p90": 9.25,
+          "p95": 9.49,
+          "ci95Low": 8.59,
+          "ci95High": 9.18,
+          "ci95HalfWidth": 0.3
+        },
+        "perRunMedians": {
+          "count": 10,
+          "mean": 5.3,
+          "median": 5.3,
+          "standardDeviation": 0.23,
+          "standardError": 0.07,
+          "min": 5,
+          "max": 5.8,
+          "p75": 5.4,
+          "p90": 5.44,
+          "p95": 5.62,
+          "ci95Low": 5.14,
+          "ci95High": 5.46,
+          "ci95HalfWidth": 0.16
+        },
+        "perRunMeanValues": [
+          8.94,
+          8.36,
+          8.68,
+          9.08,
+          9.2,
+          8.42,
+          9.12,
+          8.82,
+          8.52,
+          9.72
+        ],
+        "perRunMedianValues": [
+          5.3,
+          5.8,
+          5.1,
+          5.4,
+          5.4,
+          5,
+          5.4,
+          5.2,
+          5.3,
+          5.1
+        ]
+      },
+      "unrelatedUpdateToNextPaint": {
+        "rawMeasurements": {
+          "count": 50,
+          "mean": 5.93,
+          "median": 5.3,
+          "standardDeviation": 4.33,
+          "standardError": 0.61,
+          "min": 0.7,
+          "max": 15.1,
+          "p75": 9.65,
+          "p90": 11.91,
+          "p95": 12.21,
+          "ci95Low": 4.73,
+          "ci95High": 7.13,
+          "ci95HalfWidth": 1.2
+        },
+        "perRunMeans": {
+          "count": 10,
+          "mean": 5.93,
+          "median": 5.4,
+          "standardDeviation": 2.43,
+          "standardError": 0.77,
+          "min": 3.02,
+          "max": 10.56,
+          "p75": 7.45,
+          "p90": 8.54,
+          "p95": 9.55,
+          "ci95Low": 4.19,
+          "ci95High": 7.67,
+          "ci95HalfWidth": 1.74
+        },
+        "perRunMedians": {
+          "count": 10,
+          "mean": 6.09,
+          "median": 5.25,
+          "standardDeviation": 4.01,
+          "standardError": 1.27,
+          "min": 0.8,
+          "max": 11.5,
+          "p75": 9.48,
+          "p90": 11.5,
+          "p95": 11.5,
+          "ci95Low": 3.22,
+          "ci95High": 8.96,
+          "ci95HalfWidth": 2.87
+        },
+        "perRunMeanValues": [
+          4.46,
+          3.02,
+          3.08,
+          7.66,
+          6.82,
+          10.56,
+          8.32,
+          6.08,
+          4.72,
+          4.58
+        ],
+        "perRunMedianValues": [
+          3.9,
+          2,
+          0.8,
+          11.5,
+          9.8,
+          11.5,
+          8.5,
+          6.3,
+          4.2,
+          2.4
+        ]
+      },
+      "expensiveCallsDuringInput": {
+        "perRunValues": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        "perRunStatistics": {
+          "count": 10,
+          "mean": 5,
+          "median": 5,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "min": 5,
+          "max": 5,
+          "p75": 5,
+          "p90": 5,
+          "p95": 5,
+          "ci95Low": 5,
+          "ci95High": 5,
+          "ci95HalfWidth": 0
+        }
+      },
+      "expensiveCallsDuringUnrelated": {
+        "perRunValues": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "perRunStatistics": {
+          "count": 10,
+          "mean": 0,
+          "median": 0,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "min": 0,
+          "max": 0,
+          "p75": 0,
+          "p90": 0,
+          "p95": 0,
+          "ci95Low": 0,
+          "ci95High": 0,
+          "ci95HalfWidth": 0
+        }
+      },
+      "finalExpensiveCallCount": {
+        "perRunValues": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "perRunStatistics": {
+          "count": 10,
+          "mean": 6,
+          "median": 6,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "min": 6,
+          "max": 6,
+          "p75": 6,
+          "p90": 6,
+          "p95": 6,
+          "ci95Low": 6,
+          "ci95High": 6,
+          "ci95HalfWidth": 0
+        }
+      }
+    }
+  ],
+  "comparison": {
+    "inputToNextPaint": {
+      "meanBasedDifference": {
+        "absoluteReduction": 1.06,
+        "relativeReductionPercent": 10.65,
+        "speedupRatio": 1.12,
+        "pairedDifference": {
+          "values": [
+            1.64,
+            0.56,
+            1.04,
+            1.3,
+            0.02,
+            1.52,
+            0.62,
+            1.54,
+            2.58,
+            -0.22
+          ],
+          "statistics": {
+            "count": 10,
+            "mean": 1.06,
+            "median": 1.17,
+            "standardDeviation": 0.84,
+            "standardError": 0.26,
+            "min": -0.22,
+            "max": 2.58,
+            "p75": 1.53,
+            "p90": 1.73,
+            "p95": 2.16,
+            "ci95Low": 0.46,
+            "ci95High": 1.66,
+            "ci95HalfWidth": 0.6
+          }
+        }
+      },
+      "medianBasedDifference": {
+        "absoluteReduction": 0.3,
+        "relativeReductionPercent": 5.36,
+        "speedupRatio": 1.06,
+        "pairedDifference": {
+          "values": [
+            0.4,
+            -0.4,
+            0.5,
+            0.6,
+            0.3,
+            0.5,
+            0,
+            0.1,
+            0.5,
+            0.5
+          ],
+          "statistics": {
+            "count": 10,
+            "mean": 0.3,
+            "median": 0.45,
+            "standardDeviation": 0.31,
+            "standardError": 0.1,
+            "min": -0.4,
+            "max": 0.6,
+            "p75": 0.5,
+            "p90": 0.51,
+            "p95": 0.55,
+            "ci95Low": 0.08,
+            "ci95High": 0.52,
+            "ci95HalfWidth": 0.22
+          }
+        }
+      }
+    },
+    "unrelatedUpdateToNextPaint": {
+      "meanBasedDifference": {
+        "absoluteReduction": 0.73,
+        "relativeReductionPercent": 10.96,
+        "speedupRatio": 1.12,
+        "pairedDifference": {
+          "values": [
+            0.84,
+            0.54,
+            1.98,
+            -1.1,
+            3.48,
+            1.66,
+            -0.82,
+            0.16,
+            0.64,
+            -0.12
+          ],
+          "statistics": {
+            "count": 10,
+            "mean": 0.73,
+            "median": 0.59,
+            "standardDeviation": 1.37,
+            "standardError": 0.43,
+            "min": -1.1,
+            "max": 3.48,
+            "p75": 1.46,
+            "p90": 2.13,
+            "p95": 2.8,
+            "ci95Low": -0.25,
+            "ci95High": 1.7,
+            "ci95HalfWidth": 0.98
+          }
+        }
+      },
+      "medianBasedDifference": {
+        "absoluteReduction": 0.27,
+        "relativeReductionPercent": 4.25,
+        "speedupRatio": 1.04,
+        "pairedDifference": {
+          "values": [
+            1.3,
+            1.7,
+            2.2,
+            -8,
+            1.3,
+            1.3,
+            -1.2,
+            0.3,
+            1.6,
+            2.2
+          ],
+          "statistics": {
+            "count": 10,
+            "mean": 0.27,
+            "median": 1.3,
+            "standardDeviation": 3.07,
+            "standardError": 0.97,
+            "min": -8,
+            "max": 2.2,
+            "p75": 1.68,
+            "p90": 2.2,
+            "p95": 2.2,
+            "ci95Low": -1.93,
+            "ci95High": 2.47,
+            "ci95HalfWidth": 2.2
+          }
+        }
+      }
+    },
+    "expensiveCallsDuringInput": {
+      "meanBasedDifference": {
+        "absoluteReduction": 0,
+        "relativeReductionPercent": 0,
+        "speedupRatio": 1,
+        "pairedDifference": {
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "statistics": {
+            "count": 10,
+            "mean": 0,
+            "median": 0,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "min": 0,
+            "max": 0,
+            "p75": 0,
+            "p90": 0,
+            "p95": 0,
+            "ci95Low": 0,
+            "ci95High": 0,
+            "ci95HalfWidth": 0
+          }
+        }
+      }
+    },
+    "expensiveCallsDuringUnrelated": {
+      "meanBasedDifference": {
+        "absoluteReduction": 5,
+        "relativeReductionPercent": 100,
+        "speedupRatio": null,
+        "pairedDifference": {
+          "values": [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5
+          ],
+          "statistics": {
+            "count": 10,
+            "mean": 5,
+            "median": 5,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "min": 5,
+            "max": 5,
+            "p75": 5,
+            "p90": 5,
+            "p95": 5,
+            "ci95Low": 5,
+            "ci95High": 5,
+            "ci95HalfWidth": 0
+          }
+        }
+      }
+    },
+    "finalExpensiveCallCount": {
+      "meanBasedDifference": {
+        "absoluteReduction": 5,
+        "relativeReductionPercent": 45.45,
+        "speedupRatio": 1.83,
+        "pairedDifference": {
+          "values": [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5
+          ],
+          "statistics": {
+            "count": 10,
+            "mean": 5,
+            "median": 5,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "min": 5,
+            "max": 5,
+            "p75": 5,
+            "p90": 5,
+            "p95": 5,
+            "ci95Low": 5,
+            "ci95High": 5,
+            "ci95HalfWidth": 0
+          }
+        }
+      }
+    }
+  }
+}

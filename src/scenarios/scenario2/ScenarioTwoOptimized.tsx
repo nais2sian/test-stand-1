@@ -1,6 +1,5 @@
 import {
   Profiler,
-  useMemo,
   useRef,
   useState,
   useEffect,
@@ -57,8 +56,6 @@ export default function ScenarioTwoOptimized() {
   const [scrollTop, setScrollTop] = useState(0);
   const [paintCost, setPaintCost] = useState<string>("-");
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-
-  const renderedAt = useMemo(() => performance.now().toFixed(2), []);
 
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
@@ -129,7 +126,6 @@ export default function ScenarioTwoOptimized() {
           are mounted.
         </p>
 
-        <p>Last render timestamp: {renderedAt}</p>
         <p>Total rows: {rows.length}</p>
         <p>Visible rows in DOM: {visibleRows.length}</p>
         <p>Last scroll-to-next-paint: {paintCost} ms</p>

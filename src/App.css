@@ -182,3 +182,43 @@
     border-right-color: var(--border);
   }
 }
+
+.search-label {
+  display: block;
+  margin: 16px 0 8px;
+  font-weight: 600;
+}
+
+.search-input {
+  width: min(100%, 520px);
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.search-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.search-card {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg, transparent);
+  font-size: 13px;
+}
+
+.search-card-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}

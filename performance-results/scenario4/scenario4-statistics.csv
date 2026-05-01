@@ -1,0 +1,7 @@
+scenario,mode,level,count,meanMs,medianMs,standardDeviationMs,standardErrorMs,minMs,maxMs,p75Ms,p90Ms,p95Ms,ci95LowMs,ci95HighMs,ci95HalfWidthMs
+scenario4,baseline,rawMeasurements,100,140.06,138.7,8.86,0.89,125.3,174.8,144.33,153.02,156.41,138.33,141.8,1.74
+scenario4,baseline,perRunMeans,10,140.06,139.98,1.61,0.51,137.91,142.93,141.19,141.6,142.26,138.91,141.21,1.15
+scenario4,baseline,perRunMedians,10,138.16,137.73,1.77,0.56,136,141.05,139.38,140.73,140.89,136.89,139.42,1.27
+scenario4,optimized,rawMeasurements,100,10.02,9.9,1.22,0.12,8.2,16.3,10.4,11.3,12,9.78,10.26,0.24
+scenario4,optimized,perRunMeans,10,10.02,10.02,0.28,0.09,9.56,10.48,10.2,10.26,10.37,9.82,10.22,0.2
+scenario4,optimized,perRunMedians,10,9.87,9.88,0.29,0.09,9.45,10.35,10.07,10.13,10.24,9.66,10.08,0.21

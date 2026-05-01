@@ -1,0 +1,11 @@
+scenario,mode,metric,level,count,mean,median,standardDeviation,standardError,min,max,p75,p90,p95,ci95Low,ci95High,ci95HalfWidth
+scenario1,baseline,inputToNextPaint,perRun,10,9.95,9.84,0.66,0.21,8.92,11.1,10.38,10.63,10.87,9.47,10.42,0.47
+scenario1,baseline,unrelatedUpdateToNextPaint,perRun,10,6.66,5.8,2.7,0.85,3.56,12.22,7.26,10.49,11.36,4.72,8.59,1.93
+scenario1,baseline,expensiveCallsDuringInput,perRun,10,5,5,0,0,5,5,5,5,5,5,5,0
+scenario1,baseline,expensiveCallsDuringUnrelated,perRun,10,5,5,0,0,5,5,5,5,5,5,5,0
+scenario1,baseline,finalExpensiveCallCount,perRun,10,11,11,0,0,11,11,11,11,11,11,11,0
+scenario1,optimized,inputToNextPaint,perRun,10,8.89,8.88,0.42,0.13,8.36,9.72,9.11,9.25,9.49,8.59,9.18,0.3
+scenario1,optimized,unrelatedUpdateToNextPaint,perRun,10,5.93,5.4,2.43,0.77,3.02,10.56,7.45,8.54,9.55,4.19,7.67,1.74
+scenario1,optimized,expensiveCallsDuringInput,perRun,10,5,5,0,0,5,5,5,5,5,5,5,0
+scenario1,optimized,expensiveCallsDuringUnrelated,perRun,10,0,0,0,0,0,0,0,0,0,0,0,0
+scenario1,optimized,finalExpensiveCallCount,perRun,10,6,6,0,0,6,6,6,6,6,6,6,0

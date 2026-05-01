@@ -1,0 +1,5 @@
+Метрика;Baseline, среднее;Baseline, медиана;Optimized, среднее;Optimized, медиана;Абсолютное снижение;Относительное снижение;95% ДИ разницы;Единица
+input-to-next-paint;9,95;9,84;8,89;8,88;1,06;10,65%;[0,46; 1,66];мс
+unrelated-update-to-next-paint;6,66;5,8;5,93;5,4;0,73;10,96%;[-0,25; 1,7];мс
+expensiveFilterAndSort при вводе;5;5;5;5;0;0%;[0; 0];выз.
+expensiveFilterAndSort при unrelated update;5;5;0;0;5;100%;[5; 5];выз.

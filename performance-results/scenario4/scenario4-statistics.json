@@ -1,0 +1,196 @@
+{
+  "scenario": "scenario4",
+  "interpretationUnit": "One run is treated as one independent observation. Raw measurements are descriptive only.",
+  "modes": [
+    {
+      "scenario": "scenario4",
+      "mode": "baseline",
+      "runs": 10,
+      "rawMeasurements": {
+        "count": 100,
+        "meanMs": 140.06,
+        "medianMs": 138.7,
+        "standardDeviationMs": 8.86,
+        "standardErrorMs": 0.89,
+        "minMs": 125.3,
+        "maxMs": 174.8,
+        "p75Ms": 144.33,
+        "p90Ms": 153.02,
+        "p95Ms": 156.41,
+        "ci95LowMs": 138.33,
+        "ci95HighMs": 141.8,
+        "ci95HalfWidthMs": 1.74
+      },
+      "perRunMeans": {
+        "count": 10,
+        "meanMs": 140.06,
+        "medianMs": 139.98,
+        "standardDeviationMs": 1.61,
+        "standardErrorMs": 0.51,
+        "minMs": 137.91,
+        "maxMs": 142.93,
+        "p75Ms": 141.19,
+        "p90Ms": 141.6,
+        "p95Ms": 142.26,
+        "ci95LowMs": 138.91,
+        "ci95HighMs": 141.21,
+        "ci95HalfWidthMs": 1.15
+      },
+      "perRunMedians": {
+        "count": 10,
+        "meanMs": 138.16,
+        "medianMs": 137.73,
+        "standardDeviationMs": 1.77,
+        "standardErrorMs": 0.56,
+        "minMs": 136,
+        "maxMs": 141.05,
+        "p75Ms": 139.38,
+        "p90Ms": 140.73,
+        "p95Ms": 140.89,
+        "ci95LowMs": 136.89,
+        "ci95HighMs": 139.42,
+        "ci95HalfWidthMs": 1.27
+      },
+      "perRunMeanValues": [
+        140.96,
+        141.26,
+        139.76,
+        138.07,
+        139.21,
+        141.45,
+        142.93,
+        140.2,
+        137.91,
+        138.88
+      ],
+      "perRunMedianValues": [
+        139.75,
+        140.7,
+        136.85,
+        137.55,
+        138.25,
+        136,
+        141.05,
+        137.9,
+        137.05,
+        136.45
+      ]
+    },
+    {
+      "scenario": "scenario4",
+      "mode": "optimized",
+      "runs": 10,
+      "rawMeasurements": {
+        "count": 100,
+        "meanMs": 10.02,
+        "medianMs": 9.9,
+        "standardDeviationMs": 1.22,
+        "standardErrorMs": 0.12,
+        "minMs": 8.2,
+        "maxMs": 16.3,
+        "p75Ms": 10.4,
+        "p90Ms": 11.3,
+        "p95Ms": 12,
+        "ci95LowMs": 9.78,
+        "ci95HighMs": 10.26,
+        "ci95HalfWidthMs": 0.24
+      },
+      "perRunMeans": {
+        "count": 10,
+        "meanMs": 10.02,
+        "medianMs": 10.02,
+        "standardDeviationMs": 0.28,
+        "standardErrorMs": 0.09,
+        "minMs": 9.56,
+        "maxMs": 10.48,
+        "p75Ms": 10.2,
+        "p90Ms": 10.26,
+        "p95Ms": 10.37,
+        "ci95LowMs": 9.82,
+        "ci95HighMs": 10.22,
+        "ci95HalfWidthMs": 0.2
+      },
+      "perRunMedians": {
+        "count": 10,
+        "meanMs": 9.87,
+        "medianMs": 9.88,
+        "standardDeviationMs": 0.29,
+        "standardErrorMs": 0.09,
+        "minMs": 9.45,
+        "maxMs": 10.35,
+        "p75Ms": 10.07,
+        "p90Ms": 10.13,
+        "p95Ms": 10.24,
+        "ci95LowMs": 9.66,
+        "ci95HighMs": 10.08,
+        "ci95HalfWidthMs": 0.21
+      },
+      "perRunMeanValues": [
+        10.2,
+        9.56,
+        9.9,
+        9.95,
+        9.93,
+        10.48,
+        10.19,
+        10.09,
+        9.64,
+        10.23
+      ],
+      "perRunMedianValues": [
+        10.35,
+        9.85,
+        10,
+        9.65,
+        10.1,
+        9.85,
+        10.1,
+        9.45,
+        9.45,
+        9.9
+      ]
+    }
+  ],
+  "comparison": {
+    "meanBasedDifference": {
+      "absoluteReductionMs": 130.04,
+      "relativeReductionPercent": 92.85,
+      "speedupRatio": 13.98,
+      "pairedDifferenceStats": {
+        "count": 10,
+        "meanMs": 130.05,
+        "medianMs": 129.98,
+        "standardDeviationMs": 1.52,
+        "standardErrorMs": 0.48,
+        "minMs": 128.12,
+        "maxMs": 132.74,
+        "p75Ms": 130.92,
+        "p90Ms": 131.8,
+        "p95Ms": 132.27,
+        "ci95LowMs": 128.96,
+        "ci95HighMs": 131.13,
+        "ci95HalfWidthMs": 1.09
+      }
+    },
+    "medianBasedDifference": {
+      "absoluteReductionMs": 128.29,
+      "relativeReductionPercent": 92.86,
+      "speedupRatio": 14,
+      "pairedDifferenceStats": {
+        "count": 10,
+        "meanMs": 128.28,
+        "medianMs": 128.03,
+        "standardDeviationMs": 1.67,
+        "standardErrorMs": 0.53,
+        "minMs": 126.15,
+        "maxMs": 130.95,
+        "p75Ms": 129.16,
+        "p90Ms": 130.86,
+        "p95Ms": 130.91,
+        "ci95LowMs": 127.09,
+        "ci95HighMs": 129.48,
+        "ci95HalfWidthMs": 1.2
+      }
+    }
+  }
+}
