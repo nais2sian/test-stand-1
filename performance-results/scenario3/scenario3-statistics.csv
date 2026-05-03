@@ -1,0 +1,9 @@
+metric;mode;runs;mean;median;standardDeviation;standardError;ci95Low;ci95High;ci95HalfWidth
+incomingUpdates;baseline;10;100.1;100;0.32;0.1;99.87;100.33;0.23
+renderedUpdates;baseline;10;100.1;100;0.32;0.1;99.87;100.33;0.23
+renderRatio;baseline;10;1;1;0;0;1;1;0
+updateToNextPaintMean;baseline;10;12.58;12.54;1.39;0.44;11.59;13.58;0.99
+incomingUpdates;optimized;10;100.1;100;0.32;0.1;99.87;100.33;0.23
+renderedUpdates;optimized;10;20;20;0;0;20;20;0
+renderRatio;optimized;10;0.2;0.2;0;0;0.2;0.2;0
+updateToNextPaintMean;optimized;10;13.48;13.23;1.21;0.38;12.62;14.35;0.86

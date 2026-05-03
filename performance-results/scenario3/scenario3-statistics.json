@@ -1,0 +1,436 @@
+{
+  "scenario": "scenario3",
+  "interpretationUnit": "One run is treated as one independent observation. Update-to-next-paint values inside one run are aggregated first.",
+  "modes": [
+    {
+      "mode": "baseline",
+      "runs": 10,
+      "runMetrics": [
+        {
+          "runIndex": 1,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 12.58,
+          "updateToNextPaintMedian": 10.7,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 2,
+          "mode": "baseline",
+          "incomingUpdates": 101,
+          "renderedUpdates": 101,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 13.68,
+          "updateToNextPaintMedian": 15.5,
+          "updateToNextPaintCount": 101
+        },
+        {
+          "runIndex": 3,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 12.21,
+          "updateToNextPaintMedian": 10.7,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 4,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 11.34,
+          "updateToNextPaintMedian": 9.35,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 5,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 15.13,
+          "updateToNextPaintMedian": 16.6,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 6,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 13.92,
+          "updateToNextPaintMedian": 14.45,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 7,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 12.51,
+          "updateToNextPaintMedian": 11.75,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 8,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 12.62,
+          "updateToNextPaintMedian": 11.9,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 9,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 11.51,
+          "updateToNextPaintMedian": 9.4,
+          "updateToNextPaintCount": 100
+        },
+        {
+          "runIndex": 10,
+          "mode": "baseline",
+          "incomingUpdates": 100,
+          "renderedUpdates": 100,
+          "renderRatio": 1,
+          "updateToNextPaintMean": 10.33,
+          "updateToNextPaintMedian": 8.55,
+          "updateToNextPaintCount": 100
+        }
+      ],
+      "incomingUpdates": {
+        "count": 10,
+        "mean": 100.1,
+        "median": 100,
+        "standardDeviation": 0.32,
+        "standardError": 0.1,
+        "ci95Low": 99.87,
+        "ci95High": 100.33,
+        "ci95HalfWidth": 0.23
+      },
+      "renderedUpdates": {
+        "count": 10,
+        "mean": 100.1,
+        "median": 100,
+        "standardDeviation": 0.32,
+        "standardError": 0.1,
+        "ci95Low": 99.87,
+        "ci95High": 100.33,
+        "ci95HalfWidth": 0.23
+      },
+      "renderRatio": {
+        "count": 10,
+        "mean": 1,
+        "median": 1,
+        "standardDeviation": 0,
+        "standardError": 0,
+        "ci95Low": 1,
+        "ci95High": 1,
+        "ci95HalfWidth": 0
+      },
+      "updateToNextPaintMean": {
+        "count": 10,
+        "mean": 12.58,
+        "median": 12.54,
+        "standardDeviation": 1.39,
+        "standardError": 0.44,
+        "ci95Low": 11.59,
+        "ci95High": 13.58,
+        "ci95HalfWidth": 0.99
+      },
+      "updateToNextPaintMedian": {
+        "count": 10,
+        "mean": 11.89,
+        "median": 11.22,
+        "standardDeviation": 2.76,
+        "standardError": 0.87,
+        "ci95Low": 9.92,
+        "ci95High": 13.86,
+        "ci95HalfWidth": 1.97
+      }
+    },
+    {
+      "mode": "optimized",
+      "runs": 10,
+      "runMetrics": [
+        {
+          "runIndex": 1,
+          "mode": "optimized",
+          "incomingUpdates": 101,
+          "renderedUpdates": 20,
+          "renderRatio": 0.198,
+          "updateToNextPaintMean": 14.3,
+          "updateToNextPaintMedian": 17.55,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 2,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 13.38,
+          "updateToNextPaintMedian": 16.5,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 3,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 12.2,
+          "updateToNextPaintMedian": 11,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 4,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 14.55,
+          "updateToNextPaintMedian": 17.05,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 5,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 15.54,
+          "updateToNextPaintMedian": 17.65,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 6,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 11.95,
+          "updateToNextPaintMedian": 10.95,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 7,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 14.62,
+          "updateToNextPaintMedian": 15.4,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 8,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 13.09,
+          "updateToNextPaintMedian": 13.75,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 9,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 12.77,
+          "updateToNextPaintMedian": 9.9,
+          "updateToNextPaintCount": 20
+        },
+        {
+          "runIndex": 10,
+          "mode": "optimized",
+          "incomingUpdates": 100,
+          "renderedUpdates": 20,
+          "renderRatio": 0.2,
+          "updateToNextPaintMean": 12.41,
+          "updateToNextPaintMedian": 9.9,
+          "updateToNextPaintCount": 20
+        }
+      ],
+      "incomingUpdates": {
+        "count": 10,
+        "mean": 100.1,
+        "median": 100,
+        "standardDeviation": 0.32,
+        "standardError": 0.1,
+        "ci95Low": 99.87,
+        "ci95High": 100.33,
+        "ci95HalfWidth": 0.23
+      },
+      "renderedUpdates": {
+        "count": 10,
+        "mean": 20,
+        "median": 20,
+        "standardDeviation": 0,
+        "standardError": 0,
+        "ci95Low": 20,
+        "ci95High": 20,
+        "ci95HalfWidth": 0
+      },
+      "renderRatio": {
+        "count": 10,
+        "mean": 0.2,
+        "median": 0.2,
+        "standardDeviation": 0,
+        "standardError": 0,
+        "ci95Low": 0.2,
+        "ci95High": 0.2,
+        "ci95HalfWidth": 0
+      },
+      "updateToNextPaintMean": {
+        "count": 10,
+        "mean": 13.48,
+        "median": 13.23,
+        "standardDeviation": 1.21,
+        "standardError": 0.38,
+        "ci95Low": 12.62,
+        "ci95High": 14.35,
+        "ci95HalfWidth": 0.86
+      },
+      "updateToNextPaintMedian": {
+        "count": 10,
+        "mean": 13.96,
+        "median": 14.57,
+        "standardDeviation": 3.26,
+        "standardError": 1.03,
+        "ci95Low": 11.64,
+        "ci95High": 16.29,
+        "ci95HalfWidth": 2.33
+      }
+    }
+  ],
+  "comparison": {
+    "incomingUpdates": {
+      "absoluteReduction": 0,
+      "relativeReductionPercent": 0,
+      "ratio": 1,
+      "pairedDifference": {
+        "values": [
+          -1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": 0,
+          "median": 0,
+          "standardDeviation": 0.47,
+          "standardError": 0.15,
+          "ci95Low": -0.34,
+          "ci95High": 0.34,
+          "ci95HalfWidth": 0.34
+        }
+      }
+    },
+    "renderedUpdates": {
+      "absoluteReduction": 80.1,
+      "relativeReductionPercent": 80.02,
+      "ratio": 5,
+      "pairedDifference": {
+        "values": [
+          80,
+          81,
+          80,
+          80,
+          80,
+          80,
+          80,
+          80,
+          80,
+          80
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": 80.1,
+          "median": 80,
+          "standardDeviation": 0.32,
+          "standardError": 0.1,
+          "ci95Low": 79.87,
+          "ci95High": 80.33,
+          "ci95HalfWidth": 0.23
+        }
+      }
+    },
+    "renderRatio": {
+      "absoluteReduction": 0.8,
+      "relativeReductionPercent": 80.02,
+      "ratio": 5.01,
+      "pairedDifference": {
+        "values": [
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": 0.8,
+          "median": 0.8,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "ci95Low": 0.8,
+          "ci95High": 0.8,
+          "ci95HalfWidth": 0
+        }
+      }
+    },
+    "updateToNextPaintMean": {
+      "absoluteReduction": -0.9,
+      "relativeReductionPercent": -7.14,
+      "ratio": 0.93,
+      "pairedDifference": {
+        "values": [
+          -1.72,
+          0.3,
+          0.01,
+          -3.21,
+          -0.41,
+          1.97,
+          -2.11,
+          -0.47,
+          -1.26,
+          -2.08
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": -0.9,
+          "median": -0.87,
+          "standardDeviation": 1.49,
+          "standardError": 0.47,
+          "ci95Low": -1.96,
+          "ci95High": 0.17,
+          "ci95HalfWidth": 1.06
+        }
+      }
+    }
+  }
+}

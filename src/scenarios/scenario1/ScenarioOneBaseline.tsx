@@ -108,10 +108,10 @@ export default function ScenarioOneBaseline() {
   return (
     <Profiler id="ScenarioOneBaseline" onRender={onRenderCallback}>
       <section data-testid="scenario1-baseline">
-        <h2>Scenario 1 - Baseline</h2>
+        <h2>Сценарий 1 - Базовый вариант</h2>
         <p>
-          No memoization for filtered data. Every render recomputes filtering
-          and sorting.
+          Фильтрация данных выполняется без мемоизации. При каждом рендере
+          повторно выполняются фильтрация и сортировка.
         </p>
 
         <div className="controls">
@@ -120,31 +120,32 @@ export default function ScenarioOneBaseline() {
             className="search"
             value={query}
             onChange={handleInputChange}
-            placeholder="Type to filter 10,000 items"
+            placeholder="Введите текст для фильтрации 10 000 элементов"
           />
           <button
             onClick={handleUnrelatedUpdate}
             data-testid="scenario1-unrelated-update"
           >
-            Unrelated state update: {counter}
+            Обновление несвязанного состояния: {counter}
           </button>
 
           <button onClick={handleResetCounter}>
-            Reset expensive call count
+            Сбросить счетчик вычислений
           </button>
         </div>
 
-        <p>Visible items: {filteredItems.length}</p>
+        <p>Отображаемые элементы: {filteredItems.length}</p>
         <p data-testid="scenario1-expensive-call-count">
-          expensiveFilterAndSort calls: {getExpensiveCallCount()}
+          Вызовы expensiveFilterAndSort: {getExpensiveCallCount()}
         </p>
+
         <div className="table">
           <div className="row row-header">
             <span>ID</span>
-            <span>Name</span>
-            <span>Category</span>
-            <span>Price</span>
-            <span>Rating</span>
+            <span>Название</span>
+            <span>Категория</span>
+            <span>Цена</span>
+            <span>Рейтинг</span>
           </div>
 
           {filteredItems.slice(0, 300).map((item) => (

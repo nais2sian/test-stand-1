@@ -23,8 +23,7 @@ body {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin: 16px 0;
-  flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 
 button,

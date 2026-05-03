@@ -22,7 +22,7 @@ const UI_BATCH_INTERVAL_MS = 250;
 function generateInitialCards(count: number): MetricCard[] {
   return Array.from({ length: count }, (_, index) => ({
     id: index + 1,
-    name: `Metric ${index + 1}`,
+    name: `Метрика ${index + 1}`,
     value: 100 + ((index * 17) % 100),
     change: 0,
     updatedAt: Date.now(),
@@ -48,9 +48,9 @@ const Card = memo(function Card({ item }: { item: MetricCard }) {
   return (
     <div className="metric-card">
       <div className="metric-card-title">{item.name}</div>
-      <div>Value: {item.value}</div>
-      <div>Change: {item.change}</div>
-      <div>Updated: {item.updatedAt}</div>
+      <div>Значение: {item.value}</div>
+      <div>Изменение: {item.change}</div>
+      <div>Обновлено: {item.updatedAt}</div>
     </div>
   );
 });
@@ -175,24 +175,38 @@ export default function ScenarioThreeOptimized() {
 
   return (
     <Profiler id="ScenarioThreeOptimized" onRender={onRenderCallback}>
-      <section>
-        <h2>Scenario 3 - Optimized</h2>
+      <section data-testid="scenario3-optimized">
+        <h2>Сценарий 3 - Оптимизированный вариант</h2>
         <p>
-          High-frequency incoming updates are batched. Data arrives every 50 ms,
-          but the UI is updated every 250 ms.
+          Высокочастотные входящие обновления объединяются в пакеты. Данные
+          поступают каждые 50 мс, но интерфейс обновляется каждые 250 мс.
         </p>
 
         <div className="controls">
-          <button onClick={handleStart}>Start</button>
-          <button onClick={handleStop}>Stop</button>
-          <button onClick={handleReset}>Reset</button>
+          <button data-testid="scenario3-start" onClick={handleStart}>
+            Запустить
+          </button>
+          <button data-testid="scenario3-stop" onClick={handleStop}>
+            Остановить
+          </button>
+          <button data-testid="scenario3-reset" onClick={handleReset}>
+            Сбросить
+          </button>
         </div>
 
-        <p>Running: {isRunning ? "Yes" : "No"}</p>
-        <p>Incoming updates: {incomingUpdates}</p>
-        <p>Rendered updates: {renderedUpdates}</p>
-        <p>Last update-to-next-paint: {lastMeasure} ms</p>
-        <p>Total cards: {cards.length}</p>
+        <p data-testid="scenario3-running">
+          Выполняется: {isRunning ? "Да" : "Нет"}
+        </p>
+        <p data-testid="scenario3-incoming-updates">
+          Входящие обновления: {incomingUpdates}
+        </p>
+        <p data-testid="scenario3-rendered-updates">
+          Отрендеренные обновления: {renderedUpdates}
+        </p>
+        <p data-testid="scenario3-last-measure">
+          Последнее время от обновления до следующей отрисовки: {lastMeasure} мс
+        </p>
+        <p>Всего карточек: {cards.length}</p>
 
         <div className="metrics-grid">
           {cards.map((item) => (

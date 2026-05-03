@@ -116,27 +116,28 @@ export default function ScenarioTwoOptimized() {
       }
     });
   }, [scrollTop]);
-
   return (
     <Profiler id="ScenarioTwoOptimized" onRender={onRenderCallback}>
-      <section>
-        <h2>Scenario 2 - Optimized</h2>
+      <section data-testid="scenario2-optimized">
+        <h2>Сценарий 2 - Оптимизированный вариант</h2>
         <p>
-          Manual virtualization. Only visible rows and a small overscan buffer
-          are mounted.
+          Ручная виртуализация. В DOM монтируются только видимые строки и
+          небольшой буфер дополнительных строк.
         </p>
 
-        <p>Total rows: {rows.length}</p>
-        <p>Visible rows in DOM: {visibleRows.length}</p>
-        <p>Last scroll-to-next-paint: {paintCost} ms</p>
+        <p>Всего строк: {rows.length}</p>
+        <p>Видимых строк в DOM: {visibleRows.length}</p>
+        <p>
+          Последнее время от прокрутки до следующей отрисовки: {paintCost} мс
+        </p>
 
         <div className="virtual-table-header">
           <div className="virtual-row virtual-header">
             <span>ID</span>
-            <span>Title</span>
-            <span>Category</span>
-            <span>Price</span>
-            <span>Stock</span>
+            <span>Название</span>
+            <span>Категория</span>
+            <span>Цена</span>
+            <span>Остаток</span>
           </div>
         </div>
 
@@ -144,6 +145,7 @@ export default function ScenarioTwoOptimized() {
           ref={scrollContainerRef}
           className="virtual-scroll-container"
           onScroll={handleScroll}
+          data-testid="scenario2-scroll-container"
         >
           <div className="virtual-inner" style={{ height: `${totalHeight}px` }}>
             {visibleRows.map((item, index) => {

@@ -62,29 +62,30 @@ export default function App() {
           className={scenario === "scenario1" ? "active" : ""}
           onClick={() => handleScenarioChange("scenario1")}
         >
-          Scenario 1 - Memoization
+          Сценарий 1 - Мемоизация (Memoization)
         </button>
 
         <button
           className={scenario === "scenario2" ? "active" : ""}
           onClick={() => handleScenarioChange("scenario2")}
         >
-          Scenario 2 - Virtualization
+          Сценарий 2 - Виртуализация (Virtualization)
         </button>
 
         <button
           className={scenario === "scenario3" ? "active" : ""}
           onClick={() => handleScenarioChange("scenario3")}
         >
-          Scenario 3 - Frequent updates
+          Сценарий 3 - Частые обновления (Frequent updates)
+        </button>
+
+        <button
+          className={scenario === "scenario4" ? "active" : ""}
+          onClick={() => handleScenarioChange("scenario4")}
+        >
+          Сценарий 4 - Приоритезация задач (Scheduling)
         </button>
       </div>
-      <button
-        className={scenario === "scenario4" ? "active" : ""}
-        onClick={() => handleScenarioChange("scenario4")}
-      >
-        Scenario 4 - Scheduling
-      </button>
 
       <div className="controls">
         <button

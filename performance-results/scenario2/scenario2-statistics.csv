@@ -1,0 +1,9 @@
+metric;mode;runs;mean;median;standardDeviation;standardError;ci95Low;ci95High;ci95HalfWidth;unit
+scroll-to-next-paint;baseline;10;10.66;11.48;2.39;0.76;8.95;12.37;1.71;мс
+Строки в DOM после загрузки;baseline;10;10000;10000;0;0;10000;10000;0;стр.
+Строки в DOM при прокрутке;baseline;10;10000;10000;0;0;10000;10000;0;стр.
+DOM-узлы после загрузки;baseline;10;110162;110162;0;0;110162;110162;0;узл.
+scroll-to-next-paint;optimized;10;8.67;7.55;3.51;1.11;6.16;11.18;2.51;мс
+Строки в DOM после загрузки;optimized;10;20;20;0;0;20;20;0;стр.
+Строки в DOM при прокрутке;optimized;10;28.4;28.4;0;0;28.4;28.4;0;стр.
+DOM-узлы после загрузки;optimized;10;406;406;0;0;406;406;0;узл.

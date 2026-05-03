@@ -47,22 +47,24 @@ export default function ScenarioTwoBaseline() {
 
   return (
     <Profiler id="ScenarioTwoBaseline" onRender={onRenderCallback}>
-      <section>
-        <h2>Scenario 2 - Baseline</h2>
+      <section data-testid="scenario2-baseline">
+        <h2>Сценарий 2 - Базовый вариант</h2>
         <p>
-          Full rendering of a large list. All 10,000 rows are mounted into the
-          DOM.
+          Полный рендеринг большого списка. Все 10 000 строк монтируются в DOM.
         </p>
 
-        <p>Total rows: {rows.length}</p>
+        <p>Всего строк: {rows.length}</p>
 
-        <div className="virtual-table baseline-table">
+        <div
+          className="virtual-table baseline-table"
+          data-testid="scenario2-baseline-table"
+        >
           <div className="virtual-row virtual-header">
             <span>ID</span>
-            <span>Title</span>
-            <span>Category</span>
-            <span>Price</span>
-            <span>Stock</span>
+            <span>Название</span>
+            <span>Категория</span>
+            <span>Цена</span>
+            <span>Остаток</span>
           </div>
 
           {rows.map((item) => (

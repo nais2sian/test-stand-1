@@ -1,0 +1,354 @@
+{
+  "scenario": "scenario2",
+  "interpretationUnit": "One run is treated as one independent observation. Five scroll measurements inside one run are aggregated first.",
+  "modes": [
+    {
+      "scenario": "scenario2",
+      "mode": "baseline",
+      "runs": 10,
+      "metrics": {
+        "scrollToNextPaint": {
+          "label": "scroll-to-next-paint",
+          "unit": "мс",
+          "perRunValues": [
+            10.04,
+            11.64,
+            8.78,
+            13.68,
+            12.38,
+            7.64,
+            11.84,
+            12.92,
+            6.36,
+            11.32
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 10.66,
+            "median": 11.48,
+            "standardDeviation": 2.39,
+            "standardError": 0.76,
+            "ci95Low": 8.95,
+            "ci95High": 12.37,
+            "ci95HalfWidth": 1.71
+          }
+        },
+        "initialRenderedRows": {
+          "label": "Строки в DOM после загрузки",
+          "unit": "стр.",
+          "perRunValues": [
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 10000,
+            "median": 10000,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "ci95Low": 10000,
+            "ci95High": 10000,
+            "ci95HalfWidth": 0
+          }
+        },
+        "renderedRowsDuringScroll": {
+          "label": "Строки в DOM при прокрутке",
+          "unit": "стр.",
+          "perRunValues": [
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 10000,
+            "median": 10000,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "ci95Low": 10000,
+            "ci95High": 10000,
+            "ci95HalfWidth": 0
+          }
+        },
+        "initialDomNodes": {
+          "label": "DOM-узлы после загрузки",
+          "unit": "узл.",
+          "perRunValues": [
+            110162,
+            110162,
+            110162,
+            110162,
+            110162,
+            110162,
+            110162,
+            110162,
+            110162,
+            110162
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 110162,
+            "median": 110162,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "ci95Low": 110162,
+            "ci95High": 110162,
+            "ci95HalfWidth": 0
+          }
+        }
+      }
+    },
+    {
+      "scenario": "scenario2",
+      "mode": "optimized",
+      "runs": 10,
+      "metrics": {
+        "scrollToNextPaint": {
+          "label": "scroll-to-next-paint",
+          "unit": "мс",
+          "perRunValues": [
+            7.66,
+            3.94,
+            14.08,
+            7.68,
+            5.7,
+            12.02,
+            7.44,
+            6.6,
+            14.12,
+            7.44
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 8.67,
+            "median": 7.55,
+            "standardDeviation": 3.51,
+            "standardError": 1.11,
+            "ci95Low": 6.16,
+            "ci95High": 11.18,
+            "ci95HalfWidth": 2.51
+          }
+        },
+        "initialRenderedRows": {
+          "label": "Строки в DOM после загрузки",
+          "unit": "стр.",
+          "perRunValues": [
+            20,
+            20,
+            20,
+            20,
+            20,
+            20,
+            20,
+            20,
+            20,
+            20
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 20,
+            "median": 20,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "ci95Low": 20,
+            "ci95High": 20,
+            "ci95HalfWidth": 0
+          }
+        },
+        "renderedRowsDuringScroll": {
+          "label": "Строки в DOM при прокрутке",
+          "unit": "стр.",
+          "perRunValues": [
+            28.4,
+            28.4,
+            28.4,
+            28.4,
+            28.4,
+            28.4,
+            28.4,
+            28.4,
+            28.4,
+            28.4
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 28.4,
+            "median": 28.4,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "ci95Low": 28.4,
+            "ci95High": 28.4,
+            "ci95HalfWidth": 0
+          }
+        },
+        "initialDomNodes": {
+          "label": "DOM-узлы после загрузки",
+          "unit": "узл.",
+          "perRunValues": [
+            406,
+            406,
+            406,
+            406,
+            406,
+            406,
+            406,
+            406,
+            406,
+            406
+          ],
+          "perRunStatistics": {
+            "count": 10,
+            "mean": 406,
+            "median": 406,
+            "standardDeviation": 0,
+            "standardError": 0,
+            "ci95Low": 406,
+            "ci95High": 406,
+            "ci95HalfWidth": 0
+          }
+        }
+      }
+    }
+  ],
+  "comparison": {
+    "scrollToNextPaint": {
+      "label": "scroll-to-next-paint",
+      "unit": "мс",
+      "absoluteReduction": 1.99,
+      "relativeReductionPercent": 18.67,
+      "ratio": 1.23,
+      "pairedDifference": {
+        "values": [
+          2.38,
+          7.7,
+          -5.3,
+          6,
+          6.68,
+          -4.38,
+          4.4,
+          6.32,
+          -7.76,
+          3.88
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": 1.99,
+          "median": 4.14,
+          "standardDeviation": 5.65,
+          "standardError": 1.79,
+          "ci95Low": -2.05,
+          "ci95High": 6.04,
+          "ci95HalfWidth": 4.04
+        }
+      }
+    },
+    "initialRenderedRows": {
+      "label": "Строки в DOM после загрузки",
+      "unit": "стр.",
+      "absoluteReduction": 9980,
+      "relativeReductionPercent": 99.8,
+      "ratio": 500,
+      "pairedDifference": {
+        "values": [
+          9980,
+          9980,
+          9980,
+          9980,
+          9980,
+          9980,
+          9980,
+          9980,
+          9980,
+          9980
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": 9980,
+          "median": 9980,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "ci95Low": 9980,
+          "ci95High": 9980,
+          "ci95HalfWidth": 0
+        }
+      }
+    },
+    "renderedRowsDuringScroll": {
+      "label": "Строки в DOM при прокрутке",
+      "unit": "стр.",
+      "absoluteReduction": 9971.6,
+      "relativeReductionPercent": 99.72,
+      "ratio": 352.11,
+      "pairedDifference": {
+        "values": [
+          9971.6,
+          9971.6,
+          9971.6,
+          9971.6,
+          9971.6,
+          9971.6,
+          9971.6,
+          9971.6,
+          9971.6,
+          9971.6
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": 9971.6,
+          "median": 9971.6,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "ci95Low": 9971.6,
+          "ci95High": 9971.6,
+          "ci95HalfWidth": 0
+        }
+      }
+    },
+    "initialDomNodes": {
+      "label": "DOM-узлы после загрузки",
+      "unit": "узл.",
+      "absoluteReduction": 109756,
+      "relativeReductionPercent": 99.63,
+      "ratio": 271.33,
+      "pairedDifference": {
+        "values": [
+          109756,
+          109756,
+          109756,
+          109756,
+          109756,
+          109756,
+          109756,
+          109756,
+          109756,
+          109756
+        ],
+        "statistics": {
+          "count": 10,
+          "mean": 109756,
+          "median": 109756,
+          "standardDeviation": 0,
+          "standardError": 0,
+          "ci95Low": 109756,
+          "ci95High": 109756,
+          "ci95HalfWidth": 0
+        }
+      }
+    }
+  }
+}

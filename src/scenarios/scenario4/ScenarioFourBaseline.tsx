@@ -26,8 +26,8 @@ const RENDER_WORK = 350;
 function generateSearchItems(count: number): SearchItem[] {
   return Array.from({ length: count }, (_, index) => ({
     id: index + 1,
-    title: `Result ${index + 1}`,
-    category: `Category ${(index % 20) + 1}`,
+    title: `Результат ${index + 1}`,
+    category: `Категория ${(index % 20) + 1}`,
     score: (index * 17) % 100,
     searchText: `reactreact rendering performance concurrent item ${index + 1}`,
   }));
@@ -67,10 +67,10 @@ const ResultCard = memo(function ResultCard({
   return (
     <div className="search-card">
       <div className="search-card-title">{item.title}</div>
-      <div>Category: {item.category}</div>
-      <div>Score: {item.score}</div>
-      <div>Query length: {query.length}</div>
-      <div>Render checksum: {checksum}</div>
+      <div>Категория: {item.category}</div>
+      <div>Оценка: {item.score}</div>
+      <div>Длина запроса: {query.length}</div>
+      <div>Контрольное значение рендера: {checksum}</div>
     </div>
   );
 });
@@ -238,37 +238,40 @@ export default function ScenarioFourBaseline() {
   return (
     <Profiler id="ScenarioFourBaseline" onRender={onRenderCallback}>
       <section data-testid="scenario4-baseline">
-        <h2>Scenario 4 - Baseline</h2>
+        <h2>Сценарий 4 - Базовый вариант</h2>
         <p>
-          Urgent input update and heavy list update are processed together. The
-          input can be delayed by rendering work.
+          Срочное обновление поля ввода и тяжелое обновление списка
+          обрабатываются вместе. Из-за работы рендеринга отображение ввода может
+          задерживаться.
         </p>
 
         <div className="controls">
           <button onClick={handleRunAutoInput} disabled={isAutoTyping}>
-            Run auto input
+            Запустить автоматический ввод
           </button>
-          <button onClick={handleReset}>Reset</button>
+          <button onClick={handleReset}>Сбросить</button>
         </div>
 
-        <label className="search-label" htmlFor="scenario4-baseline-input">
-          Search query
-        </label>
-        <input
-          data-testid="scenario4-input"
-          id="scenario4-baseline-input"
-          className="search-input"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder="Type reactreact"
-        />
+        <div className="search-field">
+          <label className="search-label" htmlFor="scenario4-baseline-input">
+            Поисковый запрос
+          </label>
+          <input
+            data-testid="scenario4-input"
+            id="scenario4-baseline-input"
+            className="search-input"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder="Введите reactreact"
+          />
+        </div>
 
-        <p>Auto typing: {isAutoTyping ? "Yes" : "No"}</p>
-        <p>Typed characters: {typedCharacters}</p>
-        <p>Input value: {inputValue || "-"}</p>
-        <p>List query: {resultQuery || "-"}</p>
-        <p>Rendered results: {results.length}</p>
-        <p>Last input-to-next-paint: {lastMeasure} ms</p>
+        <p>Автоматический ввод: {isAutoTyping ? "Да" : "Нет"}</p>
+        <p>Введено символов: {typedCharacters}</p>
+        <p>Значение поля ввода: {inputValue || "-"}</p>
+        <p>Запрос для списка: {resultQuery || "-"}</p>
+        <p>Отрендерено результатов: {results.length}</p>
+        <p>Последнее время от ввода до следующей отрисовки: {lastMeasure} мс</p>
 
         <ResultsGrid results={results} query={resultQuery} />
       </section>
