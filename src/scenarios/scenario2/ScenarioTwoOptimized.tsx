@@ -2,11 +2,9 @@ import {
   Profiler,
   useRef,
   useState,
-  useEffect,
-  useCallback,
-  memo,
-  type UIEvent,
+  type CSSProperties,
   type ProfilerOnRenderCallback,
+  type UIEvent,
 } from "react";
 
 type RowItem = {
@@ -34,13 +32,7 @@ function generateRows(count: number): RowItem[] {
 
 const rows = generateRows(ROWS_COUNT);
 
-const Row = memo(function Row({
-  item,
-  style,
-}: {
-  item: RowItem;
-  style: React.CSSProperties;
-}) {
+function Row({ item, style }: { item: RowItem; style: CSSProperties }) {
   return (
     <div className="virtual-row virtual-absolute-row" style={style}>
       <span>{item.id}</span>
@@ -50,12 +42,12 @@ const Row = memo(function Row({
       <span>{item.stock}</span>
     </div>
   );
-});
+}
 
 export default function ScenarioTwoOptimized() {
   const [scrollTop, setScrollTop] = useState(0);
   const [paintCost, setPaintCost] = useState<string>("-");
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollMeasureIdRef = useRef(0);
 
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
@@ -77,45 +69,40 @@ export default function ScenarioTwoOptimized() {
 
   const visibleRows = rows.slice(startIndex, endIndex);
 
-  const handleScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
-    performance.mark("scenario2-scroll-start");
-    setScrollTop(event.currentTarget.scrollTop);
-  }, []);
+  function handleScroll(event: UIEvent<HTMLDivElement>) {
+    const measureId = scrollMeasureIdRef.current + 1;
+    scrollMeasureIdRef.current = measureId;
 
-  useEffect(() => {
-    if (performance.getEntriesByName("scenario2-scroll-start").length === 0) {
-      return;
-    }
+    const startMark = `scenario2-optimized-scroll-start-${measureId}`;
+    const endMark = `scenario2-optimized-scroll-end-${measureId}`;
+    const measureName = "scenario2-optimized-scroll-to-next-paint";
+
+    performance.mark(startMark);
+    setScrollTop(event.currentTarget.scrollTop);
 
     requestAnimationFrame(() => {
-      performance.mark("scenario2-scroll-end");
+      if (measureId !== scrollMeasureIdRef.current) {
+        return;
+      }
+
+      performance.mark(endMark);
 
       try {
-        performance.measure(
-          "scenario2-scroll-to-next-paint",
-          "scenario2-scroll-start",
-          "scenario2-scroll-end",
-        );
+        const measure = performance.measure(measureName, startMark, endMark);
+        const value = measure.duration.toFixed(2);
 
-        const entries = performance.getEntriesByName(
-          "scenario2-scroll-to-next-paint",
-        );
-        const lastEntry = entries[entries.length - 1];
-
-        if (lastEntry) {
-          const value = lastEntry.duration.toFixed(2);
-          setPaintCost(value);
-          console.log(`[measure] scenario2-scroll-to-next-paint: ${value} ms`);
-        }
-
-        performance.clearMarks("scenario2-scroll-start");
-        performance.clearMarks("scenario2-scroll-end");
-        performance.clearMeasures("scenario2-scroll-to-next-paint");
+        setPaintCost(value);
+        console.log(`[measure] ${measureName}: ${value} ms`);
       } catch (error) {
-        console.error("[measure] scenario2-scroll-to-next-paint failed", error);
+        console.error(`[measure] ${measureName} failed`, error);
+      } finally {
+        performance.clearMarks(startMark);
+        performance.clearMarks(endMark);
+        performance.clearMeasures(measureName);
       }
     });
-  }, [scrollTop]);
+  }
+
   return (
     <Profiler id="ScenarioTwoOptimized" onRender={onRenderCallback}>
       <section data-testid="scenario2-optimized">
@@ -142,10 +129,9 @@ export default function ScenarioTwoOptimized() {
         </div>
 
         <div
-          ref={scrollContainerRef}
           className="virtual-scroll-container"
-          onScroll={handleScroll}
           data-testid="scenario2-scroll-container"
+          onScroll={handleScroll}
         >
           <div className="virtual-inner" style={{ height: `${totalHeight}px` }}>
             {visibleRows.map((item, index) => {

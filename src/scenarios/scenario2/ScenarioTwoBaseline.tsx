@@ -1,4 +1,9 @@
-import { Profiler, type ProfilerOnRenderCallback } from "react";
+import {
+  Profiler,
+  useRef,
+  useState,
+  type ProfilerOnRenderCallback,
+} from "react";
 
 type RowItem = {
   id: number;
@@ -35,6 +40,9 @@ function Row({ item }: { item: RowItem }) {
 }
 
 export default function ScenarioTwoBaseline() {
+  const [paintCost, setPaintCost] = useState<string>("-");
+  const scrollMeasureIdRef = useRef(0);
+
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
     phase,
@@ -45,6 +53,39 @@ export default function ScenarioTwoBaseline() {
     );
   };
 
+  function handleScroll() {
+    const measureId = scrollMeasureIdRef.current + 1;
+    scrollMeasureIdRef.current = measureId;
+
+    const startMark = `scenario2-baseline-scroll-start-${measureId}`;
+    const endMark = `scenario2-baseline-scroll-end-${measureId}`;
+    const measureName = "scenario2-baseline-scroll-to-next-paint";
+
+    performance.mark(startMark);
+
+    requestAnimationFrame(() => {
+      if (measureId !== scrollMeasureIdRef.current) {
+        return;
+      }
+
+      performance.mark(endMark);
+
+      try {
+        const measure = performance.measure(measureName, startMark, endMark);
+        const value = measure.duration.toFixed(2);
+
+        setPaintCost(value);
+        console.log(`[measure] ${measureName}: ${value} ms`);
+      } catch (error) {
+        console.error(`[measure] ${measureName} failed`, error);
+      } finally {
+        performance.clearMarks(startMark);
+        performance.clearMarks(endMark);
+        performance.clearMeasures(measureName);
+      }
+    });
+  }
+
   return (
     <Profiler id="ScenarioTwoBaseline" onRender={onRenderCallback}>
       <section data-testid="scenario2-baseline">
@@ -54,10 +95,15 @@ export default function ScenarioTwoBaseline() {
         </p>
 
         <p>Всего строк: {rows.length}</p>
+        <p>Строк в DOM: {rows.length}</p>
+        <p>
+          Последнее время от прокрутки до следующей отрисовки: {paintCost} мс
+        </p>
 
         <div
           className="virtual-table baseline-table"
           data-testid="scenario2-baseline-table"
+          onScroll={handleScroll}
         >
           <div className="virtual-row virtual-header">
             <span>ID</span>
