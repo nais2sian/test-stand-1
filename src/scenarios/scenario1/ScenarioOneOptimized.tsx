@@ -1,12 +1,10 @@
-// filteredItems is wrapped in useMemo
-// recalculation happens only when query changes
-// the ProductRow component is wrapped in memo
-// the input handler is wrapped in useCallback
+// filteredItems is wrapped in useMemo.
+// Recalculation happens only when query changes.
+// ProductRow and event handlers are intentionally left non-memoized
+// to isolate the effect of useMemo.
 
 import {
-  memo,
   Profiler,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -25,6 +23,8 @@ import {
 const ITEMS_COUNT = 10000;
 const items = generateItems(ITEMS_COUNT);
 
+type MeasureType = "input" | "unrelated";
+
 type ProductRowProps = {
   id: number;
   name: string;
@@ -33,13 +33,7 @@ type ProductRowProps = {
   rating: number;
 };
 
-const ProductRow = memo(function ProductRow({
-  id,
-  name,
-  category,
-  price,
-  rating,
-}: ProductRowProps) {
+function ProductRow({ id, name, category, price, rating }: ProductRowProps) {
   return (
     <div className="row">
       <span>{id}</span>
@@ -49,14 +43,14 @@ const ProductRow = memo(function ProductRow({
       <span>{rating}</span>
     </div>
   );
-});
+}
 
 export default function ScenarioOneOptimized() {
   const [query, setQuery] = useState("");
   const [counter, setCounter] = useState(0);
   const [, forceUpdate] = useState(0);
 
-  const shouldMeasureNextPaintRef = useRef(false);
+  const pendingMeasureRef = useRef<MeasureType | null>(null);
 
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
@@ -68,37 +62,36 @@ export default function ScenarioOneOptimized() {
     );
   };
 
-  const handleInputChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      performance.mark("optimized-input-start");
-      shouldMeasureNextPaintRef.current = true;
-      setQuery(event.target.value);
-    },
-    [],
-  );
+  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+    performance.mark("optimized-input-start");
+    pendingMeasureRef.current = "input";
+    setQuery(event.target.value);
+  }
 
-  const handleUnrelatedUpdate = useCallback(() => {
+  function handleUnrelatedUpdate() {
     performance.mark("optimized-unrelated-start");
-    shouldMeasureNextPaintRef.current = true;
+    pendingMeasureRef.current = "unrelated";
     setCounter((value) => value + 1);
-  }, []);
+  }
 
-  const handleResetCounter = useCallback(() => {
+  function handleResetCounter() {
     resetExpensiveCallCount();
     forceUpdate((value) => value + 1);
-  }, []);
+  }
 
   const filteredItems = useMemo(() => {
     return expensiveFilterAndSort(items, query);
   }, [query]);
 
   useEffect(() => {
-    if (!shouldMeasureNextPaintRef.current) {
+    const measureType = pendingMeasureRef.current;
+
+    if (measureType === null) {
       return;
     }
 
     requestAnimationFrame(() => {
-      if (performance.getEntriesByName("optimized-input-start").length > 0) {
+      if (measureType === "input") {
         performance.mark("optimized-input-end");
         logMeasure(
           "optimized-input-to-next-paint",
@@ -107,9 +100,7 @@ export default function ScenarioOneOptimized() {
         );
       }
 
-      if (
-        performance.getEntriesByName("optimized-unrelated-start").length > 0
-      ) {
+      if (measureType === "unrelated") {
         performance.mark("optimized-unrelated-end");
         logMeasure(
           "optimized-unrelated-update-to-next-paint",
@@ -118,7 +109,7 @@ export default function ScenarioOneOptimized() {
         );
       }
 
-      shouldMeasureNextPaintRef.current = false;
+      pendingMeasureRef.current = null;
     });
   }, [query, counter]);
 
