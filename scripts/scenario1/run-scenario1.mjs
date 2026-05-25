@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.join("performance-results", "scenario1");
 
 const SCENARIO = "scenario1";
 const MODES = ["baseline", "optimized"];
-const RUNS_COUNT = 10;
+const RUNS_COUNT = 100;
 
 const INPUT_TEXT = "12345";
 const TYPE_DELAY_MS = 300;
@@ -72,7 +72,7 @@ async function readExpensiveCallCount(page) {
     (element) => element.textContent ?? "",
   );
 
-  const match = text.match(/expensiveFilterAndSort calls:\s*(\d+)/);
+  const match = text.match(/Вызовы\s+expensiveFilterAndSort:\s*(\d+)/);
 
   if (!match) {
     return null;

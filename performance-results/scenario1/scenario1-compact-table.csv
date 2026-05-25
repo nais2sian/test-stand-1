@@ -1,5 +1,5 @@
-Метрика;Baseline, среднее;Baseline, медиана;Optimized, среднее;Optimized, медиана;Абсолютное снижение;Относительное снижение;95% ДИ разницы;Единица
-input-to-next-paint;9,95;9,84;8,89;8,88;1,06;10,65%;[0,46; 1,66];мс
-unrelated-update-to-next-paint;6,66;5,8;5,93;5,4;0,73;10,96%;[-0,25; 1,7];мс
-expensiveFilterAndSort при вводе;5;5;5;5;0;0%;[0; 0];выз.
-expensiveFilterAndSort при unrelated update;5;5;0;0;5;100%;[5; 5];выз.
+Метрика;Baseline, среднее ± SD;Baseline, медиана;Optimized, среднее ± SD;Optimized, медиана;Абсолютное снижение;Относительное снижение;95% ДИ разницы;p-value;Единица
+input-to-next-paint;9,47 ± 0,47;9,42;9,3 ± 0,47;9,22;0,17;1,8%;[0,03; 0,3];0,0079;мс
+unrelated-update-to-next-paint;7,42 ± 1,95;7,3;6,89 ± 2,32;6,88;0,53;7,14%;[0; 1,06];0,0255;мс
+expensiveFilterAndSort при вводе;5 ± 0;5;5 ± 0;5;0;0%;[0; 0];1;выз.
+expensiveFilterAndSort при unrelated update;5 ± 0;5;0 ± 0;0;5;100%;[5; 5];0;выз.

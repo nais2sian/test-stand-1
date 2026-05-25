@@ -1,5 +1,4 @@
 import {
-  memo,
   Profiler,
   useEffect,
   useRef,
@@ -44,7 +43,7 @@ function produceNextCards(previous: MetricCard[]): MetricCard[] {
   });
 }
 
-const Card = memo(function Card({ item }: { item: MetricCard }) {
+function Card({ item }: { item: MetricCard }) {
   return (
     <div className="metric-card">
       <div className="metric-card-title">{item.name}</div>
@@ -53,7 +52,7 @@ const Card = memo(function Card({ item }: { item: MetricCard }) {
       <div>Обновлено: {item.updatedAt}</div>
     </div>
   );
-});
+}
 
 export default function ScenarioThreeOptimized() {
   const [cards, setCards] = useState<MetricCard[]>(() =>
@@ -65,12 +64,11 @@ export default function ScenarioThreeOptimized() {
   const [lastMeasure, setLastMeasure] = useState("-");
   const [runKey, setRunKey] = useState(0);
 
-  const shouldMeasureRef = useRef(false);
-  const pendingCardsRef = useRef<MetricCard[] | null>(null);
-
-  useEffect(() => {
-    pendingCardsRef.current = cards;
-  }, [cards]);
+  const pendingCardsRef = useRef<MetricCard[]>(cards);
+  const incomingUpdatesRef = useRef(0);
+  const hasPendingUpdateRef = useRef(false);
+  const pendingMeasureIdRef = useRef<number | null>(null);
+  const measureIdRef = useRef(0);
 
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
@@ -88,23 +86,27 @@ export default function ScenarioThreeOptimized() {
     }
 
     const incomingIntervalId = window.setInterval(() => {
-      pendingCardsRef.current = produceNextCards(
-        pendingCardsRef.current ?? generateInitialCards(CARDS_COUNT),
-      );
-
-      setIncomingUpdates((value) => value + 1);
+      pendingCardsRef.current = produceNextCards(pendingCardsRef.current);
+      incomingUpdatesRef.current += 1;
+      hasPendingUpdateRef.current = true;
     }, INCOMING_INTERVAL_MS);
 
     const batchIntervalId = window.setInterval(() => {
-      if (!pendingCardsRef.current) {
+      if (!hasPendingUpdateRef.current) {
         return;
       }
 
-      performance.mark("scenario3-optimized-update-start");
-      shouldMeasureRef.current = true;
+      const measureId = measureIdRef.current + 1;
+      measureIdRef.current = measureId;
+      pendingMeasureIdRef.current = measureId;
+
+      performance.mark(`scenario3-optimized-update-start-${measureId}`);
 
       setCards(pendingCardsRef.current);
+      setIncomingUpdates(incomingUpdatesRef.current);
       setRenderedUpdates((value) => value + 1);
+
+      hasPendingUpdateRef.current = false;
     }, UI_BATCH_INTERVAL_MS);
 
     return () => {
@@ -114,43 +116,37 @@ export default function ScenarioThreeOptimized() {
   }, [isRunning, runKey]);
 
   useEffect(() => {
-    if (!shouldMeasureRef.current) {
+    const measureId = pendingMeasureIdRef.current;
+
+    if (measureId === null) {
       return;
     }
 
     requestAnimationFrame(() => {
-      try {
-        performance.mark("scenario3-optimized-update-end");
-        performance.measure(
-          "scenario3-optimized-update-to-next-paint",
-          "scenario3-optimized-update-start",
-          "scenario3-optimized-update-end",
-        );
-
-        const entries = performance.getEntriesByName(
-          "scenario3-optimized-update-to-next-paint",
-        );
-        const lastEntry = entries[entries.length - 1];
-
-        if (lastEntry) {
-          const duration = lastEntry.duration.toFixed(2);
-          setLastMeasure(duration);
-          console.log(
-            `[measure] scenario3-optimized-update-to-next-paint: ${duration} ms`,
-          );
-        }
-
-        performance.clearMarks("scenario3-optimized-update-start");
-        performance.clearMarks("scenario3-optimized-update-end");
-        performance.clearMeasures("scenario3-optimized-update-to-next-paint");
-      } catch (error) {
-        console.error(
-          "[measure] scenario3-optimized-update-to-next-paint failed",
-          error,
-        );
+      if (measureId !== pendingMeasureIdRef.current) {
+        return;
       }
 
-      shouldMeasureRef.current = false;
+      const startMark = `scenario3-optimized-update-start-${measureId}`;
+      const endMark = `scenario3-optimized-update-end-${measureId}`;
+      const measureName = "scenario3-optimized-update-to-next-paint";
+
+      try {
+        performance.mark(endMark);
+
+        const measure = performance.measure(measureName, startMark, endMark);
+        const duration = measure.duration.toFixed(2);
+
+        setLastMeasure(duration);
+        console.log(`[measure] ${measureName}: ${duration} ms`);
+      } catch (error) {
+        console.error(`[measure] ${measureName} failed`, error);
+      } finally {
+        performance.clearMarks(startMark);
+        performance.clearMarks(endMark);
+        performance.clearMeasures(measureName);
+        pendingMeasureIdRef.current = null;
+      }
     });
   }, [cards]);
 
@@ -163,13 +159,19 @@ export default function ScenarioThreeOptimized() {
   }
 
   function handleReset() {
+    const initialCards = generateInitialCards(CARDS_COUNT);
+
     setIsRunning(false);
-    const initial = generateInitialCards(CARDS_COUNT);
-    setCards(initial);
-    pendingCardsRef.current = initial;
+    setCards(initialCards);
     setIncomingUpdates(0);
     setRenderedUpdates(0);
     setLastMeasure("-");
+
+    pendingCardsRef.current = initialCards;
+    incomingUpdatesRef.current = 0;
+    hasPendingUpdateRef.current = false;
+    pendingMeasureIdRef.current = null;
+
     setRunKey((value) => value + 1);
   }
 

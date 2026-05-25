@@ -27,6 +27,10 @@ function formatNumber(value) {
   return String(value).replace(".", ",");
 }
 
+function formatMeanWithSd(mean, sd, unit) {
+  return `${formatNumber(mean)} ± ${formatNumber(sd)} ${unit}`;
+}
+
 function formatConfidenceInterval(low, high) {
   return `[${formatNumber(low)}; ${formatNumber(high)}]`;
 }
@@ -39,15 +43,20 @@ function makeMetricRow({
   unit,
 }) {
   const baselineMean = baselineStats.mean;
-  const optimizedMean = optimizedStats.mean;
+  const baselineSd = baselineStats.standardDeviation;
   const baselineMedian = baselineStats.median;
+
+  const optimizedMean = optimizedStats.mean;
+  const optimizedSd = optimizedStats.standardDeviation;
   const optimizedMedian = optimizedStats.median;
 
   return {
     metricName,
     baselineMean,
+    baselineSd,
     baselineMedian,
     optimizedMean,
+    optimizedSd,
     optimizedMedian,
     absoluteReduction: comparison.absoluteReduction,
     relativeReductionPercent: comparison.relativeReductionPercent,
@@ -55,6 +64,7 @@ function makeMetricRow({
       comparison.pairedDifference.statistics.ci95Low,
       comparison.pairedDifference.statistics.ci95High,
     ),
+    pValue: comparison.pairedDifference.statistics.pValue,
     unit,
   };
 }
@@ -104,43 +114,48 @@ async function main() {
   ];
 
   const markdownTable = [
-    "| Метрика | Baseline, среднее | Baseline, медиана | Optimized, среднее | Optimized, медиана | Абсолютное снижение | Относительное снижение | 95% ДИ разницы |",
-    "|---|---:|---:|---:|---:|---:|---:|---:|",
-    ...rows.map((row) =>
-      [
-        row.metricName,
-        `${formatNumber(row.baselineMean)} ${row.unit}`,
-        `${formatNumber(row.baselineMedian)} ${row.unit}`,
-        `${formatNumber(row.optimizedMean)} ${row.unit}`,
-        `${formatNumber(row.optimizedMedian)} ${row.unit}`,
-        `${formatNumber(row.absoluteReduction)} ${row.unit}`,
-        `${formatNumber(row.relativeReductionPercent)}%`,
-        `${row.ci95} ${row.unit}`,
-      ].join(" | "),
-    ).map((row) => `| ${row} |`),
+    "| Метрика | Baseline, среднее ± SD | Baseline, медиана | Optimized, среднее ± SD | Optimized, медиана | Абсолютное снижение | Относительное снижение | 95% ДИ разницы | p-value |",
+    "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ...rows
+      .map((row) =>
+        [
+          row.metricName,
+          formatMeanWithSd(row.baselineMean, row.baselineSd, row.unit),
+          `${formatNumber(row.baselineMedian)} ${row.unit}`,
+          formatMeanWithSd(row.optimizedMean, row.optimizedSd, row.unit),
+          `${formatNumber(row.optimizedMedian)} ${row.unit}`,
+          `${formatNumber(row.absoluteReduction)} ${row.unit}`,
+          `${formatNumber(row.relativeReductionPercent)}%`,
+          `${row.ci95} ${row.unit}`,
+          formatNumber(row.pValue),
+        ].join(" | "),
+      )
+      .map((row) => `| ${row} |`),
   ].join("\n");
 
   const csvRows = [
     [
       "Метрика",
-      "Baseline, среднее",
+      "Baseline, среднее ± SD",
       "Baseline, медиана",
-      "Optimized, среднее",
+      "Optimized, среднее ± SD",
       "Optimized, медиана",
       "Абсолютное снижение",
       "Относительное снижение",
       "95% ДИ разницы",
+      "p-value",
       "Единица",
     ],
     ...rows.map((row) => [
       row.metricName,
-      formatNumber(row.baselineMean),
+      `${formatNumber(row.baselineMean)} ± ${formatNumber(row.baselineSd)}`,
       formatNumber(row.baselineMedian),
-      formatNumber(row.optimizedMean),
+      `${formatNumber(row.optimizedMean)} ± ${formatNumber(row.optimizedSd)}`,
       formatNumber(row.optimizedMedian),
       formatNumber(row.absoluteReduction),
       `${formatNumber(row.relativeReductionPercent)}%`,
       row.ci95,
+      formatNumber(row.pValue),
       row.unit,
     ]),
   ];

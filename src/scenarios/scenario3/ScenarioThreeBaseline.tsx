@@ -1,5 +1,4 @@
 import {
-  memo,
   Profiler,
   useEffect,
   useRef,
@@ -43,7 +42,7 @@ function produceNextCards(previous: MetricCard[]): MetricCard[] {
   });
 }
 
-const Card = memo(function Card({ item }: { item: MetricCard }) {
+function Card({ item }: { item: MetricCard }) {
   return (
     <div className="metric-card">
       <div className="metric-card-title">{item.name}</div>
@@ -52,7 +51,7 @@ const Card = memo(function Card({ item }: { item: MetricCard }) {
       <div>Обновлено: {item.updatedAt}</div>
     </div>
   );
-});
+}
 
 export default function ScenarioThreeBaseline() {
   const [cards, setCards] = useState<MetricCard[]>(() =>
@@ -64,7 +63,8 @@ export default function ScenarioThreeBaseline() {
   const [lastMeasure, setLastMeasure] = useState("-");
   const [runKey, setRunKey] = useState(0);
 
-  const shouldMeasureRef = useRef(false);
+  const pendingMeasureIdRef = useRef<number | null>(null);
+  const measureIdRef = useRef(0);
 
   const onRenderCallback: ProfilerOnRenderCallback = (
     id,
@@ -82,8 +82,11 @@ export default function ScenarioThreeBaseline() {
     }
 
     const intervalId = window.setInterval(() => {
-      performance.mark("scenario3-baseline-update-start");
-      shouldMeasureRef.current = true;
+      const measureId = measureIdRef.current + 1;
+      measureIdRef.current = measureId;
+      pendingMeasureIdRef.current = measureId;
+
+      performance.mark(`scenario3-baseline-update-start-${measureId}`);
 
       setCards((previous) => produceNextCards(previous));
       setIncomingUpdates((value) => value + 1);
@@ -96,43 +99,37 @@ export default function ScenarioThreeBaseline() {
   }, [isRunning, runKey]);
 
   useEffect(() => {
-    if (!shouldMeasureRef.current) {
+    const measureId = pendingMeasureIdRef.current;
+
+    if (measureId === null) {
       return;
     }
 
     requestAnimationFrame(() => {
-      try {
-        performance.mark("scenario3-baseline-update-end");
-        performance.measure(
-          "scenario3-baseline-update-to-next-paint",
-          "scenario3-baseline-update-start",
-          "scenario3-baseline-update-end",
-        );
-
-        const entries = performance.getEntriesByName(
-          "scenario3-baseline-update-to-next-paint",
-        );
-        const lastEntry = entries[entries.length - 1];
-
-        if (lastEntry) {
-          const duration = lastEntry.duration.toFixed(2);
-          setLastMeasure(duration);
-          console.log(
-            `[measure] scenario3-baseline-update-to-next-paint: ${duration} ms`,
-          );
-        }
-
-        performance.clearMarks("scenario3-baseline-update-start");
-        performance.clearMarks("scenario3-baseline-update-end");
-        performance.clearMeasures("scenario3-baseline-update-to-next-paint");
-      } catch (error) {
-        console.error(
-          "[measure] scenario3-baseline-update-to-next-paint failed",
-          error,
-        );
+      if (measureId !== pendingMeasureIdRef.current) {
+        return;
       }
 
-      shouldMeasureRef.current = false;
+      const startMark = `scenario3-baseline-update-start-${measureId}`;
+      const endMark = `scenario3-baseline-update-end-${measureId}`;
+      const measureName = "scenario3-baseline-update-to-next-paint";
+
+      try {
+        performance.mark(endMark);
+
+        const measure = performance.measure(measureName, startMark, endMark);
+        const duration = measure.duration.toFixed(2);
+
+        setLastMeasure(duration);
+        console.log(`[measure] ${measureName}: ${duration} ms`);
+      } catch (error) {
+        console.error(`[measure] ${measureName} failed`, error);
+      } finally {
+        performance.clearMarks(startMark);
+        performance.clearMarks(endMark);
+        performance.clearMeasures(measureName);
+        pendingMeasureIdRef.current = null;
+      }
     });
   }, [cards]);
 
@@ -150,6 +147,7 @@ export default function ScenarioThreeBaseline() {
     setIncomingUpdates(0);
     setRenderedUpdates(0);
     setLastMeasure("-");
+    pendingMeasureIdRef.current = null;
     setRunKey((value) => value + 1);
   }
 

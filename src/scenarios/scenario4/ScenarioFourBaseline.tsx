@@ -233,7 +233,7 @@ export default function ScenarioFourBaseline() {
 
       activeMeasureRef.current = null;
     });
-  }, [inputValue, resultQuery]);
+  }, [inputValue]);
 
   return (
     <Profiler id="ScenarioFourBaseline" onRender={onRenderCallback}>
