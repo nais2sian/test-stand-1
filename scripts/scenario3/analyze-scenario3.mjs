@@ -15,8 +15,6 @@ const OUTPUT_CSV_PATH = path.join(
   "scenario3-statistics.csv",
 );
 
-const MODES = ["baseline", "optimized"];
-
 const T_CRITICAL_95 = {
   1: 12.706,
   2: 4.303,
@@ -114,6 +112,48 @@ function standardError(values) {
   }
 
   return sd / Math.sqrt(values.length);
+}
+
+function erf(x) {
+  const sign = x >= 0 ? 1 : -1;
+  const absX = Math.abs(x);
+
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
+
+  const t = 1 / (1 + p * absX);
+  const y =
+    1 -
+    (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) *
+      t *
+      Math.exp(-absX * absX));
+
+  return sign * y;
+}
+
+function normalCdf(x) {
+  return 0.5 * (1 + erf(x / Math.sqrt(2)));
+}
+
+function calculateOneSidedPValue(values) {
+  if (values.length < 2) {
+    return null;
+  }
+
+  const average = mean(values);
+  const se = standardError(values);
+
+  if (se === null || se === 0) {
+    return average > 0 ? 0 : 1;
+  }
+
+  const tStatistic = average / se;
+
+  return 1 - normalCdf(tStatistic);
 }
 
 function confidenceInterval95(values) {
@@ -249,7 +289,10 @@ function calculatePairedDifferenceStats(baselineValues, optimizedValues) {
 
   return {
     values: differences.map((value) => round(value)),
-    statistics: describe(differences),
+    statistics: {
+      ...describe(differences),
+      pValue: round(calculateOneSidedPValue(differences), 4),
+    },
   };
 }
 
@@ -383,6 +426,8 @@ async function main() {
     scenario: "scenario3",
     interpretationUnit:
       "One run is treated as one independent observation. Update-to-next-paint values inside one run are aggregated first.",
+    hypothesisTest:
+      "One-sided paired test approximation. H0: baseline - optimized = 0. H1: baseline - optimized > 0.",
     modes: [baselineStats, optimizedStats],
     comparison: calculateComparison(baselineStats, optimizedStats),
   };

@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.join("performance-results", "scenario2");
 
 const SCENARIO = "scenario2";
 const MODES = ["baseline", "optimized"];
-const RUNS_COUNT = 10;
+const RUNS_COUNT = 100;
 const SCROLL_STEPS_COUNT = 5;
 const AFTER_PAGE_LOAD_WAIT_MS = 1000;
 const AFTER_SCROLL_WAIT_MS = 300;

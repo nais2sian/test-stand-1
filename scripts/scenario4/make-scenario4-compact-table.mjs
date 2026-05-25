@@ -27,8 +27,24 @@ function formatNumber(value) {
   return String(value).replace(".", ",");
 }
 
+function formatMeanWithSd(mean, sd, unit) {
+  return `${formatNumber(mean)} ± ${formatNumber(sd)} ${unit}`;
+}
+
 function formatConfidenceInterval(low, high) {
   return `[${formatNumber(low)}; ${formatNumber(high)}]`;
+}
+
+function formatPValue(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (value === 0) {
+    return "p < 0,0001";
+  }
+
+  return formatNumber(value);
 }
 
 async function main() {
@@ -43,81 +59,83 @@ async function main() {
   }
 
   const comparison = statistics.comparison.meanBasedDifference;
+  const differenceStats = comparison.pairedDifferenceStats;
 
-  const rows = [
-    {
-      mode: "Baseline",
-      runs: baseline.perRunMeans.count,
-      meanMs: baseline.perRunMeans.meanMs,
-      medianMs: baseline.perRunMeans.medianMs,
-      standardDeviationMs: baseline.perRunMeans.standardDeviationMs,
-      ci95: formatConfidenceInterval(
-        baseline.perRunMeans.ci95LowMs,
-        baseline.perRunMeans.ci95HighMs,
-      ),
-    },
-    {
-      mode: "Optimized",
-      runs: optimized.perRunMeans.count,
-      meanMs: optimized.perRunMeans.meanMs,
-      medianMs: optimized.perRunMeans.medianMs,
-      standardDeviationMs: optimized.perRunMeans.standardDeviationMs,
-      ci95: formatConfidenceInterval(
-        optimized.perRunMeans.ci95LowMs,
-        optimized.perRunMeans.ci95HighMs,
-      ),
-    },
-  ];
+  const row = {
+    metric: "input-to-next-paint",
+    baselineMean: baseline.perRunMeans.meanMs,
+    baselineSd: baseline.perRunMeans.standardDeviationMs,
+    baselineMedian: baseline.perRunMeans.medianMs,
+    optimizedMean: optimized.perRunMeans.meanMs,
+    optimizedSd: optimized.perRunMeans.standardDeviationMs,
+    optimizedMedian: optimized.perRunMeans.medianMs,
+    absoluteReduction: comparison.absoluteReductionMs,
+    relativeReductionPercent: comparison.relativeReductionPercent,
+    speedupRatio: comparison.speedupRatio,
+    ci95: formatConfidenceInterval(
+      differenceStats.ci95LowMs,
+      differenceStats.ci95HighMs,
+    ),
+    pValue: differenceStats.pValue,
+    unit: "мс",
+  };
 
   const markdownTable = [
-    "| Вариант | Число прогонов | Среднее, мс | Медиана, мс | Стандартное отклонение, мс | 95% доверительный интервал, мс |",
-    "|---|---:|---:|---:|---:|---:|",
-    ...rows.map((row) =>
-      [
-        row.mode,
-        row.runs,
-        formatNumber(row.meanMs),
-        formatNumber(row.medianMs),
-        formatNumber(row.standardDeviationMs),
-        row.ci95,
-      ].join(" | "),
-    ).map((row) => `| ${row} |`),
+    "### Таблица X - Описательная статистика четвертого сценария",
     "",
-    "| Показатель | Значение |",
-    "|---|---:|",
-    `| Абсолютное снижение задержки | ${formatNumber(
-      comparison.absoluteReductionMs,
-    )} мс |`,
-    `| Относительное снижение | ${formatNumber(
-      comparison.relativeReductionPercent,
-    )}% |`,
-    `| Ускорение | ${formatNumber(comparison.speedupRatio)} раза |`,
-    `| 95% доверительный интервал разницы | ${formatConfidenceInterval(
-      comparison.pairedDifferenceStats.ci95LowMs,
-      comparison.pairedDifferenceStats.ci95HighMs,
-    )} мс |`,
+    "| Метрика | Baseline, среднее ± SD | Baseline, медиана | Optimized, среднее ± SD | Optimized, медиана |",
+    "|---|---:|---:|---:|---:|",
+    `| ${row.metric} | ${formatMeanWithSd(
+      row.baselineMean,
+      row.baselineSd,
+      row.unit,
+    )} | ${formatNumber(row.baselineMedian)} ${row.unit} | ${formatMeanWithSd(
+      row.optimizedMean,
+      row.optimizedSd,
+      row.unit,
+    )} | ${formatNumber(row.optimizedMedian)} ${row.unit} |`,
+    "",
+    "### Таблица X - Проверка различий между базовой и оптимизированной реализациями в четвертом сценарии",
+    "",
+    "| Метрика | Абсолютное снижение | Относительное снижение | Ускорение | 95% ДИ разницы | p-value |",
+    "|---|---:|---:|---:|---:|---:|",
+    `| ${row.metric} | ${formatNumber(row.absoluteReduction)} ${
+      row.unit
+    } | ${formatNumber(row.relativeReductionPercent)}% | ${formatNumber(
+      row.speedupRatio,
+    )} раза | ${row.ci95} ${row.unit} | ${formatPValue(row.pValue)} |`,
   ].join("\n");
 
   const csvRows = [
     [
-      "Вариант",
-      "Число прогонов",
-      "Среднее, мс",
-      "Медиана, мс",
-      "Стандартное отклонение, мс",
-      "95% доверительный интервал, мс",
+      "Метрика",
+      "Baseline, среднее ± SD",
+      "Baseline, медиана",
+      "Optimized, среднее ± SD",
+      "Optimized, медиана",
+      "Абсолютное снижение",
+      "Относительное снижение",
+      "Ускорение",
+      "95% ДИ разницы",
+      "p-value",
+      "Единица",
     ],
-    ...rows.map((row) => [
-      row.mode,
-      row.runs,
-      formatNumber(row.meanMs),
-      formatNumber(row.medianMs),
-      formatNumber(row.standardDeviationMs),
+    [
+      row.metric,
+      `${formatNumber(row.baselineMean)} ± ${formatNumber(row.baselineSd)}`,
+      formatNumber(row.baselineMedian),
+      `${formatNumber(row.optimizedMean)} ± ${formatNumber(row.optimizedSd)}`,
+      formatNumber(row.optimizedMedian),
+      formatNumber(row.absoluteReduction),
+      `${formatNumber(row.relativeReductionPercent)}%`,
+      formatNumber(row.speedupRatio),
       row.ci95,
-    ]),
+      formatPValue(row.pValue),
+      row.unit,
+    ],
   ];
 
-  const csvContent = csvRows.map((row) => row.join(";")).join("\n");
+  const csvContent = csvRows.map((csvRow) => csvRow.join(";")).join("\n");
 
   await fs.writeFile(OUTPUT_MARKDOWN_PATH, markdownTable, "utf-8");
   await fs.writeFile(OUTPUT_CSV_PATH, csvContent, "utf-8");

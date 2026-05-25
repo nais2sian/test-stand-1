@@ -18,6 +18,7 @@ const OUTPUT_CSV_PATH = path.join(
   "scenario4",
   "scenario4-statistics.csv",
 );
+
 const INPUT_TEXT_LENGTH = 10;
 
 const T_CRITICAL_95 = {
@@ -54,7 +55,7 @@ const T_CRITICAL_95 = {
 };
 
 function round(value, digits = 2) {
-  if (value === null || Number.isNaN(value)) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
     return null;
   }
 
@@ -119,6 +120,51 @@ function standardError(values) {
   return sd / Math.sqrt(values.length);
 }
 
+function erf(x) {
+  const sign = x >= 0 ? 1 : -1;
+  const absX = Math.abs(x);
+
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
+
+  const t = 1 / (1 + p * absX);
+  const y =
+    1 -
+    (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) *
+      t *
+      Math.exp(-absX * absX));
+
+  return sign * y;
+}
+
+function normalCdf(x) {
+  return 0.5 * (1 + erf(x / Math.sqrt(2)));
+}
+
+// Односторонний p-value.
+// H0: baseline - optimized = 0.
+// H1: baseline - optimized > 0.
+function calculateOneSidedPValue(values) {
+  if (values.length < 2) {
+    return null;
+  }
+
+  const average = mean(values);
+  const se = standardError(values);
+
+  if (se === null || se === 0) {
+    return average > 0 ? 0 : 1;
+  }
+
+  const tStatistic = average / se;
+
+  return 1 - normalCdf(tStatistic);
+}
+
 function percentile(values, percentileValue) {
   if (values.length === 0) {
     return null;
@@ -173,19 +219,41 @@ function chunk(values, chunkSize) {
 }
 
 function describe(values) {
-  const ci95 = confidenceInterval95(values);
+  const cleanValues = values.filter(
+    (value) => value !== null && value !== undefined && !Number.isNaN(value),
+  );
+
+  if (cleanValues.length === 0) {
+    return {
+      count: 0,
+      meanMs: null,
+      medianMs: null,
+      standardDeviationMs: null,
+      standardErrorMs: null,
+      minMs: null,
+      maxMs: null,
+      p75Ms: null,
+      p90Ms: null,
+      p95Ms: null,
+      ci95LowMs: null,
+      ci95HighMs: null,
+      ci95HalfWidthMs: null,
+    };
+  }
+
+  const ci95 = confidenceInterval95(cleanValues);
 
   return {
-    count: values.length,
-    meanMs: round(mean(values)),
-    medianMs: round(median(values)),
-    standardDeviationMs: round(standardDeviation(values)),
-    standardErrorMs: round(standardError(values)),
-    minMs: round(Math.min(...values)),
-    maxMs: round(Math.max(...values)),
-    p75Ms: round(percentile(values, 0.75)),
-    p90Ms: round(percentile(values, 0.9)),
-    p95Ms: round(percentile(values, 0.95)),
+    count: cleanValues.length,
+    meanMs: round(mean(cleanValues)),
+    medianMs: round(median(cleanValues)),
+    standardDeviationMs: round(standardDeviation(cleanValues)),
+    standardErrorMs: round(standardError(cleanValues)),
+    minMs: round(Math.min(...cleanValues)),
+    maxMs: round(Math.max(...cleanValues)),
+    p75Ms: round(percentile(cleanValues, 0.75)),
+    p90Ms: round(percentile(cleanValues, 0.9)),
+    p95Ms: round(percentile(cleanValues, 0.95)),
     ci95LowMs: round(ci95.low),
     ci95HighMs: round(ci95.high),
     ci95HalfWidthMs: round(ci95.halfWidth),
@@ -211,21 +279,28 @@ function calculateModeStatistics(summaryItem) {
   };
 }
 
+function calculatePairedDifferenceStats(baselineValues, optimizedValues) {
+  const pairCount = Math.min(baselineValues.length, optimizedValues.length);
+
+  const differences = Array.from({ length: pairCount }, (_, index) => {
+    return baselineValues[index] - optimizedValues[index];
+  });
+
+  return {
+    values: differences.map((value) => round(value)),
+    statistics: {
+      ...describe(differences),
+      pValue: round(calculateOneSidedPValue(differences), 4),
+    },
+  };
+}
+
 function calculateComparison(baselineStats, optimizedStats) {
   const baselineMean = baselineStats.perRunMeans.meanMs;
   const optimizedMean = optimizedStats.perRunMeans.meanMs;
 
   const baselineMedian = baselineStats.perRunMedians.meanMs;
   const optimizedMedian = optimizedStats.perRunMedians.meanMs;
-
-  const meanDiffValues = baselineStats.perRunMeanValues.map(
-    (baselineValue, index) => baselineValue - optimizedStats.perRunMeanValues[index],
-  );
-
-  const medianDiffValues = baselineStats.perRunMedianValues.map(
-    (baselineValue, index) =>
-      baselineValue - optimizedStats.perRunMedianValues[index],
-  );
 
   return {
     meanBasedDifference: {
@@ -234,7 +309,10 @@ function calculateComparison(baselineStats, optimizedStats) {
         ((baselineMean - optimizedMean) / baselineMean) * 100,
       ),
       speedupRatio: round(baselineMean / optimizedMean),
-      pairedDifferenceStats: describe(meanDiffValues),
+      pairedDifferenceStats: calculatePairedDifferenceStats(
+        baselineStats.perRunMeanValues,
+        optimizedStats.perRunMeanValues,
+      ).statistics,
     },
     medianBasedDifference: {
       absoluteReductionMs: round(baselineMedian - optimizedMedian),
@@ -242,7 +320,10 @@ function calculateComparison(baselineStats, optimizedStats) {
         ((baselineMedian - optimizedMedian) / baselineMedian) * 100,
       ),
       speedupRatio: round(baselineMedian / optimizedMedian),
-      pairedDifferenceStats: describe(medianDiffValues),
+      pairedDifferenceStats: calculatePairedDifferenceStats(
+        baselineStats.perRunMedianValues,
+        optimizedStats.perRunMedianValues,
+      ).statistics,
     },
   };
 }
@@ -316,6 +397,8 @@ async function main() {
     scenario: "scenario4",
     interpretationUnit:
       "One run is treated as one independent observation. Raw measurements are descriptive only.",
+    hypothesisTest:
+      "One-sided paired test approximation. H0: baseline - optimized = 0. H1: baseline - optimized > 0.",
     modes: modeStatistics,
     comparison: calculateComparison(baselineStats, optimizedStats),
   };

@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.join("performance-results", "scenario3");
 
 const SCENARIO = "scenario3";
 const MODES = ["baseline", "optimized"];
-const RUNS_COUNT = 10;
+const RUNS_COUNT = 100;
 const RUN_DURATION_MS = 5000;
 const AFTER_STOP_WAIT_MS = 1000;
 
@@ -78,9 +78,9 @@ function calculateMedian(values) {
   return Number(sortedValues[middleIndex].toFixed(2));
 }
 
-async function readCounter(page, selector, label) {
+async function readCounter(page, selector) {
   const text = await page.$eval(selector, (element) => element.textContent ?? "");
-  const match = text.match(new RegExp(`${label}:\\s*(\\d+)`));
+  const match = text.match(/(\d+)/);
 
   if (!match) {
     return null;
@@ -193,13 +193,11 @@ async function runScenario({ mode, runIndex }) {
     const incomingUpdates = await readCounter(
       page,
       '[data-testid="scenario3-incoming-updates"]',
-      "Incoming updates",
     );
 
     const renderedUpdates = await readCounter(
       page,
       '[data-testid="scenario3-rendered-updates"]',
-      "Rendered updates",
     );
 
     const browserMetrics = await page.metrics();

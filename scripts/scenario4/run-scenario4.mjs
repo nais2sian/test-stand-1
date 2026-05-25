@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.join("performance-results", "scenario4");
 
 const SCENARIO = "scenario4";
 const MODES = ["baseline", "optimized"];
-const RUNS_COUNT = 10;
+const RUNS_COUNT = 100;
 const INPUT_TEXT = "reactreact";
 const TYPE_DELAY_MS = 300;
 const AFTER_TYPING_WAIT_MS = 2000;

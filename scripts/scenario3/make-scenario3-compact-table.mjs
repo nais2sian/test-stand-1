@@ -62,6 +62,14 @@ function formatUnit(value, unit) {
   return `${formatNumber(value)} ${unit}`;
 }
 
+function formatMeanWithSd(mean, sd, unit) {
+  if (!unit) {
+    return `${formatNumber(mean)} ± ${formatNumber(sd)}`;
+  }
+
+  return `${formatNumber(mean)} ± ${formatNumber(sd)} ${unit}`;
+}
+
 function formatPercent(value) {
   if (value === null || value === undefined) {
     return "";
@@ -80,6 +88,18 @@ function formatConfidenceInterval(low, high, unit) {
   return `${interval} ${unit}`;
 }
 
+function formatPValue(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (value === 0) {
+    return "p < 0,0001";
+  }
+
+  return formatNumber(value);
+}
+
 function getMode(statistics, mode) {
   const modeStats = statistics.modes.find((item) => item.mode === mode);
 
@@ -90,139 +110,119 @@ function getMode(statistics, mode) {
   return modeStats;
 }
 
-function makeMainComparisonTable(statistics) {
+function makeRows(statistics) {
   const baseline = getMode(statistics, "baseline");
   const optimized = getMode(statistics, "optimized");
 
-  const rows = METRICS.map((metricConfig) => {
-    const baselineMetric = baseline[metricConfig.key];
-    const optimizedMetric = optimized[metricConfig.key];
+  return METRICS.map((metricConfig) => {
+    const baselineStats = baseline[metricConfig.key];
+    const optimizedStats = optimized[metricConfig.key];
     const comparison = statistics.comparison[metricConfig.key];
+    const differenceStats = comparison.pairedDifference.statistics;
 
-    return [
-      metricConfig.label,
-      formatUnit(baselineMetric.mean, metricConfig.unit),
-      formatUnit(optimizedMetric.mean, metricConfig.unit),
-      formatUnit(comparison.absoluteReduction, metricConfig.unit),
-      formatPercent(comparison.relativeReductionPercent),
-    ];
+    return {
+      metric: metricConfig.label,
+      unit: metricConfig.unit,
+
+      baselineMean: baselineStats.mean,
+      baselineSd: baselineStats.standardDeviation,
+      baselineMedian: baselineStats.median,
+
+      optimizedMean: optimizedStats.mean,
+      optimizedSd: optimizedStats.standardDeviation,
+      optimizedMedian: optimizedStats.median,
+
+      absoluteReduction: comparison.absoluteReduction,
+      relativeReductionPercent: comparison.relativeReductionPercent,
+
+      ci95Low: differenceStats.ci95Low,
+      ci95High: differenceStats.ci95High,
+      pValue: differenceStats.pValue,
+    };
   });
+}
 
+function makeDescriptiveTable(rows) {
   return [
-    "### Таблица X - Ключевые показатели третьего сценария",
+    "### Таблица X - Описательная статистика третьего сценария",
     "",
-    "| Показатель | Базовый вариант | Оптимизированный вариант | Абсолютное снижение | Относительное снижение |",
+    "| Метрика | Baseline, среднее ± SD | Baseline, медиана | Optimized, среднее ± SD | Optimized, медиана |",
     "|---|---:|---:|---:|---:|",
-    ...rows.map((row) => `| ${row.join(" | ")} |`),
+    ...rows
+      .map((row) =>
+        [
+          row.metric,
+          formatMeanWithSd(row.baselineMean, row.baselineSd, row.unit),
+          formatUnit(row.baselineMedian, row.unit),
+          formatMeanWithSd(row.optimizedMean, row.optimizedSd, row.unit),
+          formatUnit(row.optimizedMedian, row.unit),
+        ].join(" | "),
+      )
+      .map((row) => `| ${row} |`),
   ].join("\n");
 }
 
-function makeTimeMetricTable(statistics) {
-  const baseline = getMode(statistics, "baseline");
-  const optimized = getMode(statistics, "optimized");
-
-  const baselineStats = baseline.updateToNextPaintMean;
-  const optimizedStats = optimized.updateToNextPaintMean;
-
+function makeComparisonTable(rows) {
   return [
-    "### Таблица X - Временная метрика третьего сценария",
+    "### Таблица X - Проверка различий между базовой и оптимизированной реализациями в третьем сценарии",
     "",
-    "| Вариант | Число итераций | Среднее, мс | Медиана, мс | Стандартное отклонение, мс | 95% доверительный интервал, мс |",
-    "|---|---:|---:|---:|---:|---:|",
-    `| Базовый | ${baselineStats.count} | ${formatNumber(
-      baselineStats.mean,
-    )} | ${formatNumber(baselineStats.median)} | ${formatNumber(
-      baselineStats.standardDeviation,
-    )} | ${formatConfidenceInterval(
-      baselineStats.ci95Low,
-      baselineStats.ci95High,
-      "мс",
-    )} |`,
-    `| Оптимизированный | ${optimizedStats.count} | ${formatNumber(
-      optimizedStats.mean,
-    )} | ${formatNumber(optimizedStats.median)} | ${formatNumber(
-      optimizedStats.standardDeviation,
-    )} | ${formatConfidenceInterval(
-      optimizedStats.ci95Low,
-      optimizedStats.ci95High,
-      "мс",
-    )} |`,
-  ].join("\n");
-}
-
-function makeUpdateDifferenceTable(statistics) {
-  const renderedComparison = statistics.comparison.renderedUpdates;
-  const timeComparison = statistics.comparison.updateToNextPaintMean;
-  const timeDifference = timeComparison.pairedDifference.statistics;
-
-  return [
-    "### Таблица X - Проверка различий третьего сценария",
-    "",
-    "| Показатель | Значение |",
-    "|---|---:|",
-    `| Снижение числа визуальных обновлений | ${formatUnit(
-      renderedComparison.absoluteReduction,
-      "обн.",
-    )} |`,
-    `| Относительное снижение визуальных обновлений | ${formatPercent(
-      renderedComparison.relativeReductionPercent,
-    )} |`,
-    `| Абсолютное снижение update-to-next-paint | ${formatUnit(
-      timeComparison.absoluteReduction,
-      "мс",
-    )} |`,
-    `| Относительное снижение update-to-next-paint | ${formatPercent(
-      timeComparison.relativeReductionPercent,
-    )} |`,
-    `| 95% доверительный интервал разницы update-to-next-paint | ${formatConfidenceInterval(
-      timeDifference.ci95Low,
-      timeDifference.ci95High,
-      "мс",
-    )} |`,
+    "| Метрика | Абсолютное снижение | Относительное снижение | 95% ДИ разницы | p-value |",
+    "|---|---:|---:|---:|---:|",
+    ...rows
+      .map((row) =>
+        [
+          row.metric,
+          formatUnit(row.absoluteReduction, row.unit),
+          formatPercent(row.relativeReductionPercent),
+          formatConfidenceInterval(row.ci95Low, row.ci95High, row.unit),
+          formatPValue(row.pValue),
+        ].join(" | "),
+      )
+      .map((row) => `| ${row} |`),
   ].join("\n");
 }
 
 function makeMarkdownTable(statistics) {
+  const rows = makeRows(statistics);
+
   return [
-    makeMainComparisonTable(statistics),
+    makeDescriptiveTable(rows),
     "",
-    makeTimeMetricTable(statistics),
-    "",
-    makeUpdateDifferenceTable(statistics),
+    makeComparisonTable(rows),
   ].join("\n");
 }
 
 function makeCsv(statistics) {
-  const baseline = getMode(statistics, "baseline");
-  const optimized = getMode(statistics, "optimized");
+  const rows = makeRows(statistics);
 
-  const rows = [
+  const csvRows = [
     [
-      "Показатель",
-      "Базовый вариант",
-      "Оптимизированный вариант",
+      "Метрика",
+      "Baseline, среднее ± SD",
+      "Baseline, медиана",
+      "Optimized, среднее ± SD",
+      "Optimized, медиана",
       "Абсолютное снижение",
       "Относительное снижение",
+      "95% ДИ разницы",
+      "p-value",
       "Единица",
     ],
+    ...rows.map((row) => [
+      row.metric,
+      `${formatNumber(row.baselineMean)} ± ${formatNumber(row.baselineSd)}`,
+      formatNumber(row.baselineMedian),
+      `${formatNumber(row.optimizedMean)} ± ${formatNumber(row.optimizedSd)}`,
+      formatNumber(row.optimizedMedian),
+      formatNumber(row.absoluteReduction),
+      formatPercent(row.relativeReductionPercent),
+      formatConfidenceInterval(row.ci95Low, row.ci95High, ""),
+      formatPValue(row.pValue),
+      row.unit,
+    ]),
   ];
 
-  for (const metricConfig of METRICS) {
-    const baselineMetric = baseline[metricConfig.key];
-    const optimizedMetric = optimized[metricConfig.key];
-    const comparison = statistics.comparison[metricConfig.key];
-
-    rows.push([
-      metricConfig.label,
-      formatNumber(baselineMetric.mean),
-      formatNumber(optimizedMetric.mean),
-      formatNumber(comparison.absoluteReduction),
-      formatPercent(comparison.relativeReductionPercent),
-      metricConfig.unit,
-    ]);
-  }
-
-  return rows.map((row) => row.join(";")).join("\n");
+  return csvRows.map((row) => row.join(";")).join("\n");
 }
 
 async function main() {
