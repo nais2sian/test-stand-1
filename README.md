@@ -1,71 +1,273 @@
-# React Rendering Experiment - Scenario 1 (Memoization)
+# Исследование и оптимизация рендеринга React-интерфейсов
 
-This project is a small experimental test stand for evaluating how memoization affects React rendering performance and UI responsiveness.
+Проект представляет собой экспериментальный стенд для исследования производительности веб-интерфейсов, разработанных с использованием React.
+Основная цель проекта — сравнить базовые и оптимизированные реализации типовых UI-сценариев и оценить, как разные методы оптимизации влияют на отзывчивость интерфейса, объем DOM и частоту обновлений.
 
-It focuses on a common React performance issue: expensive derived computations executed during render on every update, including updates unrelated to the computation itself.
+В работе рассматривается полный цикл обновления интерфейса: от пользовательского события и обновления состояния React до изменений DOM и последующей обработки браузером. Для измерений используются пользовательские метрики на основе Performance API, автоматизированные сценарии Puppeteer и профили Chrome DevTools Performance.
 
-## Goal
+## Экспериментальные сценарии
 
-The goal of the experiment is to compare a baseline and an optimized implementation and measure how memoization affects:
+В проекте реализованы четыре сценария:
 
-- React render cost
-- main thread load
-- perceived responsiveness
+1. **Мемоизация вычислений**
+   Проверяется влияние `useMemo` на устранение лишних вычислений при повторных рендерах.
+   Сравниваются базовый вариант, где ресурсоемкая функция вызывается при каждом рендере, и оптимизированный вариант, где результат вычисления кэшируется.
 
-## Scenario
+2. **Виртуализация длинного списка**
+   Проверяется влияние количества DOM-элементов на производительность интерфейса.
+   В базовом варианте в DOM монтируются все строки списка, а в оптимизированном — только видимая часть списка и небольшой буфер.
 
-The application simulates a data-heavy UI with:
+3. **Батчинг частых обновлений**
+   Проверяется влияние высокой частоты обновлений состояния на нагрузку интерфейса.
+   В базовом варианте каждое входящее обновление сразу приводит к обновлению UI, а в оптимизированном варианте данные накапливаются и применяются пакетами.
 
-- a list of 10,000 items
-- a search input
-- filtering and sorting logic
+4. **Приоритезация обновлений через useTransition**
+   Проверяется влияние разделения срочных и менее срочных обновлений на отзывчивость ввода.
+   В базовом варианте ввод и обновление большого списка выполняются вместе, а в оптимизированном варианте обновление списка переносится в `startTransition`.
 
-Two versions are implemented.
+## Используемые технологии
 
-### Baseline
+* React
+* Vite
+* JavaScript / TypeScript
+* Node.js
+* npm
+* Puppeteer
+* Performance API
+* Chrome DevTools Performance
 
-- filtering and sorting run on every render
-- unrelated state updates also trigger recomputation
-- child rows are not memoized
+## Подготовка проекта
 
-### Optimized
-
-- filtering and sorting are memoized with `useMemo`
-- recomputation happens only when the query changes
-- row components are wrapped with `React.memo`
-- the input handler is stabilized with `useCallback`
-
-## What this experiment shows
-
-This scenario helps demonstrate:
-
-- unnecessary recomputations in React
-- the effect of manual memoization
-- changes in render duration
-- changes in scripting time on the main thread
-- changes in responsiveness, especially INP
-
-The scenario is designed as a compute-heavy case, where the main bottleneck is JavaScript work rather than browser layout or paint.
-
-## Metrics
-
-User metrics:
-
-- INP
-- LCP
-- CLS
-
-Technical metrics:
-
-- React render duration
-- commit count and duration
-- main thread activity
-- long tasks
-- custom timings via Performance API
-
-## Run
-
-Development mode:
+Перед запуском необходимо установить зависимости:
 
 ```bash
-npm run dev
+npm install
+```
+
+## Сборка проекта
+
+Измерения рекомендуется проводить не в development-режиме, а на production-сборке.
+Для сборки проекта выполните:
+
+```bash
+npm run build
+```
+
+Если требуется запустить сборку напрямую через Vite и TypeScript, можно использовать:
+
+```bash
+npx tsc -b && npx vite build
+```
+
+## Запуск production-preview
+
+После сборки необходимо запустить локальный preview-сервер:
+
+```bash
+npm run preview
+```
+
+Или напрямую:
+
+```bash
+npx vite preview
+```
+
+После запуска приложение будет доступно локально, обычно по адресу:
+
+```text
+http://localhost:4173
+```
+
+Preview-сервер должен оставаться запущенным во время выполнения экспериментальных скриптов. Команды для экспериментов нужно запускать в отдельном терминале.
+
+## Общая последовательность выполнения эксперимента
+
+Для каждого сценария используется одинаковая логика:
+
+1. Запустить скрипт прогона эксперимента.
+2. Запустить скрипт анализа собранных результатов.
+3. Сформировать компактную таблицу с ключевыми результатами.
+
+## Сценарий 1: мемоизация вычислений
+
+Первый сценарий сравнивает базовую и оптимизированную реализации, связанные с повторными вычислениями при рендерах. В оптимизированной версии используется `useMemo`, который позволяет не выполнять ресурсоемкое вычисление повторно, если входные зависимости не изменились.
+
+### 1. Прогон эксперимента
+
+```bash
+node scripts/scenario1/run-scenario1.mjs
+```
+
+Этот скрипт запускает базовый и оптимизированный варианты первого сценария, выполняет автоматизированные пользовательские действия и сохраняет первичные результаты измерений.
+
+### 2. Анализ результатов
+
+```bash
+node scripts/scenario1/analyze-scenario1.mjs
+```
+
+Этот скрипт обрабатывает результаты прогона, рассчитывает статистические показатели и сохраняет итоговые файлы анализа.
+
+### 3. Формирование таблицы
+
+```bash
+node scripts/scenario1/make-scenario1-compact-table.mjs
+```
+
+Этот скрипт формирует таблицу с ключевыми результатами сценария. Таблицу удобно использовать для вставки в текст работы или для быстрого сравнения базовой и оптимизированной реализаций.
+
+## Сценарий 2: виртуализация длинного списка
+
+Второй сценарий проверяет влияние размера DOM на производительность интерфейса. В базовой версии в DOM отображается полный список, а в оптимизированной версии используется виртуализация, при которой в DOM находятся только видимые элементы и небольшой буфер.
+
+### 1. Прогон эксперимента
+
+```bash
+node scripts/scenario2/run-scenario2.mjs
+```
+
+### 2. Анализ результатов
+
+```bash
+node scripts/scenario2/analyze-scenario2.mjs
+```
+
+### 3. Формирование таблицы
+
+```bash
+node scripts/scenario2/make-scenario2-compact-table.mjs
+```
+
+## Сценарий 3: батчинг частых обновлений
+
+Третий сценарий моделирует поток частых входящих обновлений. В базовой версии каждое входящее обновление сразу обновляет интерфейс, а в оптимизированной версии обновления накапливаются и применяются пакетами.
+
+### 1. Прогон эксперимента
+
+```bash
+node scripts/scenario3/run-scenario3.mjs
+```
+
+### 2. Анализ результатов
+
+```bash
+node scripts/scenario3/analyze-scenario3.mjs
+```
+
+### 3. Формирование таблицы
+
+```bash
+node scripts/scenario3/make-scenario3-compact-table.mjs
+```
+
+## Сценарий 4: приоритезация через useTransition
+
+Четвертый сценарий проверяет влияние `useTransition` на отзывчивость интерфейса. В базовой версии ввод пользователя и тяжелое обновление списка выполняются без разделения приоритетов, а в оптимизированной версии обновление списка переносится в менее срочную transition-задачу.
+
+### 1. Прогон эксперимента
+
+```bash
+node scripts/scenario4/run-scenario4.mjs
+```
+
+### 2. Анализ результатов
+
+```bash
+node scripts/scenario4/analyze-scenario4.mjs
+```
+
+### 3. Формирование таблицы
+
+```bash
+node scripts/scenario4/make-scenario4-compact-table.mjs
+```
+
+## Рекомендуемый порядок полного запуска
+
+Для полного воспроизведения экспериментов выполните следующие команды.
+
+### 1. Установить зависимости
+
+```bash
+npm install
+```
+
+### 2. Собрать приложение
+
+```bash
+npm run build
+```
+
+### 3. Запустить preview-сервер
+
+```bash
+npm run preview
+```
+
+### 4. В отдельном терминале выполнить сценарий 1
+
+```bash
+node scripts/scenario1/run-scenario1.mjs
+node scripts/scenario1/analyze-scenario1.mjs
+node scripts/scenario1/make-scenario1-compact-table.mjs
+```
+
+### 5. Выполнить сценарий 2
+
+```bash
+node scripts/scenario2/run-scenario2.mjs
+node scripts/scenario2/analyze-scenario2.mjs
+node scripts/scenario2/make-scenario2-compact-table.mjs
+```
+
+### 6. Выполнить сценарий 3
+
+```bash
+node scripts/scenario3/run-scenario3.mjs
+node scripts/scenario3/analyze-scenario3.mjs
+node scripts/scenario3/make-scenario3-compact-table.mjs
+```
+
+### 7. Выполнить сценарий 4
+
+```bash
+node scripts/scenario4/run-scenario4.mjs
+node scripts/scenario4/analyze-scenario4.mjs
+node scripts/scenario4/make-scenario4-compact-table.mjs
+```
+
+## Результаты
+
+Результаты экспериментов сохраняются в директории:
+
+```text
+performance-results/
+```
+
+Для каждого сценария создается отдельная подпапка:
+
+```text
+performance-results/scenario1/
+performance-results/scenario2/
+performance-results/scenario3/
+performance-results/scenario4/
+```
+
+Внутри могут находиться первичные результаты прогонов, файлы статистического анализа и таблицы с ключевыми результатами.
+
+## Важные условия для корректных измерений
+
+Для получения сопоставимых результатов рекомендуется:
+
+* запускать приложение только после production-сборки;
+* использовать один и тот же браузер и одинаковые условия запуска;
+* не открывать лишние вкладки во время измерений;
+* отключить сторонние расширения браузера;
+* выполнять базовые и оптимизированные сценарии в одинаковых условиях;
+* не включать время сборки проекта в результаты измерений.
+
+## Назначение проекта
+
+Проект предназначен для демонстрации того, что производительность React-интерфейса зависит от разных типов ограничений: вычислительной нагрузки, размера DOM, частоты обновлений и планирования задач.
+Каждый эксперимент показывает отдельный класс проблемы и соответствующий подход к оптимизации.
