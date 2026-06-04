@@ -66,11 +66,9 @@ function calculateMedian(values) {
 async function runScenario({ mode, runIndex }) {
   const browser = await puppeteer.launch({
     headless: false,
-    defaultViewport: {
-      width: 1440,
-      height: 1000,
-    },
+    defaultViewport: null,
     args: [
+      "--start-maximized",
       "--disable-extensions",
       "--disable-background-networking",
       "--disable-default-apps",

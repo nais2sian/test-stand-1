@@ -68,19 +68,14 @@ function calculateMedian(values) {
 
 async function getMaxScrollTop(page, mode) {
   return page.evaluate((currentMode) => {
-    if (currentMode === "optimized") {
-      const container = document.querySelector(
-        '[data-testid="scenario2-scroll-container"]',
-      );
+    const scrollElement =
+      currentMode === "optimized"
+        ? document.querySelector('[data-testid="scenario2-scroll-container"]')
+        : document.querySelector('[data-testid="scenario2-baseline-table"]');
 
-      if (!container) {
-        return 0;
-      }
-
-      return Math.max(0, container.scrollHeight - container.clientHeight);
+    if (!scrollElement) {
+      return 0;
     }
-
-    const scrollElement = document.scrollingElement ?? document.documentElement;
 
     return Math.max(0, scrollElement.scrollHeight - scrollElement.clientHeight);
   }, mode);
@@ -96,7 +91,7 @@ async function measureScrollToNextPaint(page, { mode, scrollTop, stepIndex }) {
       const scrollTarget =
         currentMode === "optimized"
           ? document.querySelector('[data-testid="scenario2-scroll-container"]')
-          : document.scrollingElement ?? document.documentElement;
+          : document.querySelector('[data-testid="scenario2-baseline-table"]');
 
       if (!scrollTarget) {
         return null;
@@ -150,11 +145,9 @@ async function countRenderedRows(page, mode) {
 async function runScenario({ mode, runIndex }) {
   const browser = await puppeteer.launch({
     headless: false,
-    defaultViewport: {
-      width: 1440,
-      height: 1000,
-    },
+    defaultViewport: null,
     args: [
+      "--start-maximized",
       "--disable-extensions",
       "--disable-background-networking",
       "--disable-default-apps",
